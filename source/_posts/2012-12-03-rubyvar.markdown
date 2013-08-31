@@ -1,0 +1,240 @@
+---
+layout: post
+title: "ruby中的变量"
+date: 2012-12-03 02:45
+comments: true
+categories: ruby
+---
+
+
+ruby上的变量分为局部变量，全局变量，类的实例变量，对象的实例变量和类变量。每个变量的
+作用，特性和作用域都有所不同。首先要对这些变量有充分深刻的认识,细细抠它们之间的区别
+，才能在以后的应用中准确的使用。
+
+
+1、定义变量
+
+ 局部变量直接以小写字母，或者下划线开始，如：
+	tmp=[]
+	_tmp=true
+
+ 以$开头的变量是全局变量,如：
+	$config= {:site=>"bizmass.com"}
+
+ 类的实例变量和对象的实例变量，即实例变量用@开头，如：
+	@name="suzhen"
+
+ 类变量用@@开头，如：
+	@@count=1
+
+
+2、变量的区别和用法
+
+1）局部变量会存在的范围：
+ proc{...}   
+ lambda do..end
+ def...end   
+ class...end   
+ module...end  
+ 局部变量属于所在的作用域，它的生命起始于声明处，结束于该声明所在的块、方法定义、类
+、模块定义的结尾。随着作用域的结束，局部变量的生命也将结束。如果局部变量在生命期内，
+变包含在一个闭包中，它的生命会因为这个闭包在作用域结束的时间得到延续。
+
+2）全局变量会在程序的任何一个地方定义，在不同的类/模块/所在的范围里都可以读取和改变
+。全局变量是唯一的。
+   注意：应谨慎使用全局变量.由于在任何地方都可以被写因此他们相当危险.滥用全局变量会
+导致很难隔离臭虫;同时也视为程序的设计未经严格考虑.当你发现必须要使用全局变量时,记得
+给它一个不会在其它地方一不小心就用到的描述性名字，避免在其它地方变无意修改。
+	global_variables #查看所有全局变量
+
+  全局变量的改变是可以被跟踪的。如果它的值被改变，就会执行一个proc。像是一个触发器。
+
+	trace_var :$x,proc{ p "$x is now #{$x}"  }
+
+	ruby> $x = 5 
+  
+	$x is now 5 
+   
+3）类变量要声明在类定义中，类变量是**类**、**子类**，**类的对象**，**子类对象**中共
+享的一个变量，即该类整个家族中在类方法中，又可以在实例方法中共享该变量。访类族对类变
+量影响是共同承担的。
+**但是子类中定义的类变量，在父量中是不以被访问到的,类变量是向下共享的.**
+
+类变量的作用域就在声明所在类族和类的对象中。不同类族内有相关名字的类变量，但这是不同
+的类变量，只是名称一样罢了,彼此不影响.
+
+
+注意：在定义一个类变量时，必须要马上赋值。
+
+	class Mysuperclass
+	  def self.say
+	    @@a
+	  end
+	end
+	class Myclass<Mysuperclass
+	  @@a="suzhen"
+	  def self.say
+	    @@a
+	  end
+	end
+	class Mysubclass<Myclass
+	  def play
+	   @@a
+	  end
+	end
+
+
+	p Myclass.say #suzhen
+	p Mysubclass.new.play #suzhen
+	p Mysuperclass.say #报没有申明类变量的错误
+
+这和全局变量不一样。类变量是私有的，在类外无法直接访问，你只能通过实例方法和类方法去
+访问它。
+
+模块中定义的类变量(模块变量)被所有包含该模块的类所共享。
+
+	module TestModule
+	  @@foo = 10
+	end
+	class Klass
+	  include Foo
+	  p @@foo += 1          # => 11
+	end
+	class Base
+	  include Foo
+	  p @@foo += 2          # => 12
+	end
+
+但是类变量有一个问题就是在类外面，也是随时可以改变这个变量值的。这是一个危险。
+另一个例子：
+	class Myclass
+	  @@koko=23
+	  def self.pkoko
+	    @@koko
+	  end
+	end
+
+	@@koko=99
+
+	p Myclass.pkoko #99
+
+同名类变量在类外面是可以一下改变的，比如：在所有类外面@@koko=100,那么所有类族中的同
+名类变量@@koko都会改变。
+
+
+4）类的实例对象，是类作为对象，所产生的实例对象。深刻理解一切都是对象这句话,就需要把
+类当作一个普通对象去看待。类的实例对象是用来记录只属于该类的一些属性。比如想记录一下
+某个类被实例化了多少次，或者被哪些继承了。我们都可以创建一个类的实例对象来记录这些。
+这就是类的实例对象的用途。
+  在类定义中去声明类的实例变量，而这些类的实例变量只能在类方法中使用。即然类实例变量
+是针对某一个类的，那自然就不可能被子类使用，失去了被继承的价值和意义。因此如果要定义
+需要和子类共享的类全局数据，使用类变量；但是如果要定义仅供类本身使用的类全局数据可以
+使用类实例变量。
+
+
+	class Myclass
+    	@age=12 #类实例变量
+	    def say
+	        p @age #nil 错误，类的实例变量不能放在实例方法中,会被误认为是对象的实例变量
+	    end
+	    def self.cry
+	        p @age #12 类的实例变量只能在类方法中使用
+	    end
+	end
+	class Mysonclass < Myclass
+	   def self.meet
+	     p @age #nil 错误，父类的类实例变量不能被继承的，会被误认为是当前类的类实例变量
+	  end
+	end
+
+定义类的实例变量还可以有几种方式：
+
+方式一：
+	class Myclass
+	   class<<self
+	    attr_accessor :age #类的实例变量
+	   end
+	end
+
+
+	Myclass.age=2
+	p Myclass.age #2
+
+方式二：
+	Myclass.class_eval do
+	  attr_accessor :age #类的实例变量
+	  #顺便说一句，要搞清楚现在是在一个类的环境中
+	  self #代表这个类
+	end
+
+
+5）再思考一下对象实例变量，对象实例变量会保存对象中，而实例方法会保存在类中。
+
+它们只能在类的实例方法中被使用，也可以被继承。
+	class Myclass
+	   attr_accessor :name
+	   def initialize
+	       @name="suzhen" #对象实例变量
+	   end
+	   def say
+	      p @name #suzhen
+	   end
+	   def self.cry
+	      p @name #nil 错误，对象实例变量不能放在类方法中，会被识认为是类的实例变量
+	   end
+	end
+
+
+	class Mysonclass < Myclass
+	   def talk
+	     p @name #suzhen 父类的对象实例变量是可以被继承的
+	   end
+	end
+
+
+
+如果我们不在定义类的时候定义好这些实例变量，也可以在之后的编程过程中去创建这些实例变
+量。在对象里加的实例变量就是对象实例变量，在类里加的实例变量就是类的实例变量。
+
+	Myclass.instance_variable_defined?("@age")   #true
+	obj.instance_variable_defined?("@name")   #true
+
+	Myclass.instance_variable_set("@age", 23)
+	Myclass.instance_variable_get("@age") 
+
+	obj.instance_variable_set("@name", "even")
+	obj.instance_variable_get("@name") 
+
+
+
+
+	Myclass.new.instance_eval do
+	  attr_accessor :name #对象的实例变量
+	  #顺便说一句，要搞清楚现在是在一个对象的环境中
+	  self #代表这个对象
+	end 
+
+
+其实Myclass.instance_eval也可以实现，但我不喜欢这种方式，会容易搞混。
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
