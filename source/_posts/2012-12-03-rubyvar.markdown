@@ -7,7 +7,7 @@ categories: ruby
 ---
 
 
-ruby上的变量分为局部变量，全局变量，类的实例变量，对象的实例变量和类变量。每个变量的
+ruby上的变量分为局部变量(local variables)，全局变量(global variables)，类的实例变量(class instance variables)，对象的实例变量(object instance variables)和类变量(class variables)。每个变量的
 作用，特性和作用域都有所不同。首先要对这些变量有充分深刻的认识,细细抠它们之间的区别
 ，才能在以后的应用中准确的使用。
 
@@ -55,7 +55,7 @@ ruby上的变量分为局部变量，全局变量，类的实例变量，对象�
   
 	$x is now 5 
    
-3）类变量要声明在类定义中，类变量是**类**、**子类**，**类的对象**，**子类对象**中共
+3）类变量要声明在类定义中，类变量是**类**、**子类**，**类的实例对象**，**子类实例对象**中共
 享的一个变量，即该类整个家族中在类方法中，又可以在实例方法中共享该变量。访类族对类变
 量影响是共同承担的。
 **但是子类中定义的类变量，在父量中是不以被访问到的,类变量是向下共享的.**
@@ -64,7 +64,8 @@ ruby上的变量分为局部变量，全局变量，类的实例变量，对象�
 的类变量，只是名称一样罢了,彼此不影响.
 
 
-注意：在定义一个类变量时，必须要马上赋值。
+**注意：要先定义，直接使用异常，在定义一个类变量时，必须要马上赋值。**
+       {% codeblock lang:ruby %}
 
 	class Mysuperclass
 	  def self.say
@@ -87,12 +88,13 @@ ruby上的变量分为局部变量，全局变量，类的实例变量，对象�
 	p Myclass.say #suzhen
 	p Mysubclass.new.play #suzhen
 	p Mysuperclass.say #报没有申明类变量的错误
+	{% endcodeblock %}
 
 这和全局变量不一样。类变量是私有的，在类外无法直接访问，你只能通过实例方法和类方法去
 访问它。
 
 模块中定义的类变量(模块变量)被所有包含该模块的类所共享。
-
+       {% codeblock lang:ruby %}
 	module TestModule
 	  @@foo = 10
 	end
@@ -104,9 +106,11 @@ ruby上的变量分为局部变量，全局变量，类的实例变量，对象�
 	  include Foo
 	  p @@foo += 2          # => 12
 	end
+	{% endcodeblock %}
 
 但是类变量有一个问题就是在类外面，也是随时可以改变这个变量值的。这是一个危险。
 另一个例子：
+        {% codeblock lang:ruby %}
 	class Myclass
 	  @@koko=23
 	  def self.pkoko
@@ -117,6 +121,7 @@ ruby上的变量分为局部变量，全局变量，类的实例变量，对象�
 	@@koko=99
 
 	p Myclass.pkoko #99
+       {% endcodeblock %}
 
 同名类变量在类外面是可以一下改变的，比如：在所有类外面@@koko=100,那么所有类族中的同
 名类变量@@koko都会改变。
@@ -131,9 +136,9 @@ ruby上的变量分为局部变量，全局变量，类的实例变量，对象�
 需要和子类共享的类全局数据，使用类变量；但是如果要定义仅供类本身使用的类全局数据可以
 使用类实例变量。
 
-
+       {% codeblock lang:ruby %}
 	class Myclass
-    	@age=12 #类实例变量
+            @age=12 #类实例变量
 	    def say
 	        p @age #nil 错误，类的实例变量不能放在实例方法中,会被误认为是对象的实例变量
 	    end
@@ -146,10 +151,13 @@ ruby上的变量分为局部变量，全局变量，类的实例变量，对象�
 	     p @age #nil 错误，父类的类实例变量不能被继承的，会被误认为是当前类的类实例变量
 	  end
 	end
+        {% endcodeblock %}
 
 定义类的实例变量还可以有几种方式：
 
 方式一：
+       {% codeblock lang:ruby %}
+
 	class Myclass
 	   class<<self
 	    attr_accessor :age #类的实例变量
@@ -159,18 +167,24 @@ ruby上的变量分为局部变量，全局变量，类的实例变量，对象�
 
 	Myclass.age=2
 	p Myclass.age #2
+       {% endcodeblock %}
 
 方式二：
+
+        {% codeblock lang:ruby %}
+
 	Myclass.class_eval do
 	  attr_accessor :age #类的实例变量
 	  #顺便说一句，要搞清楚现在是在一个类的环境中
 	  self #代表这个类
 	end
+        {% endcodeblock %}
 
 
 5）再思考一下对象实例变量，对象实例变量会保存对象中，而实例方法会保存在类中。
 
 它们只能在类的实例方法中被使用，也可以被继承。
+       {% codeblock lang:ruby %}
 	class Myclass
 	   attr_accessor :name
 	   def initialize
@@ -191,10 +205,12 @@ ruby上的变量分为局部变量，全局变量，类的实例变量，对象�
 	   end
 	end
 
+        {% endcodeblock %}
 
 
 如果我们不在定义类的时候定义好这些实例变量，也可以在之后的编程过程中去创建这些实例变
 量。在对象里加的实例变量就是对象实例变量，在类里加的实例变量就是类的实例变量。
+        {% codeblock lang:ruby %}
 
 	Myclass.instance_variable_defined?("@age")   #true
 	obj.instance_variable_defined?("@name")   #true
@@ -204,18 +220,61 @@ ruby上的变量分为局部变量，全局变量，类的实例变量，对象�
 
 	obj.instance_variable_set("@name", "even")
 	obj.instance_variable_get("@name") 
-
-
-
-
-	Myclass.new.instance_eval do
-	  attr_accessor :name #对象的实例变量
-	  #顺便说一句，要搞清楚现在是在一个对象的环境中
-	  self #代表这个对象
-	end 
+        {% endcodeblock %}
 
 
 其实Myclass.instance_eval也可以实现，但我不喜欢这种方式，会容易搞混。
+
+问题：
+类变量和类实例变量有什么区别？
+http://snippets.aktagon.com/snippets/299-class-variables-vs-class-instance-variables-in-ruby
+http://www.railstips.org/blog/archives/2006/11/18/class-and-instance-variables-in-ruby/
+
+
+6)宏
+attr_accessor,attr_reader,attr_writer都是创建实例变量(类实例变量,对象实例变量)
+{% codeblock lang:ruby %}
+class Myclass
+  attr_accessor :age  #创建对象实例变量                                                                                                                                      
+end
+
+obj = Myclass.new
+obj.age=1
+p obj.age #1                                                                                                                                                                 
+obj.instance_eval { class<<self; attr_accessor :name;end }
+obj.name =1
+p obj.name #1
+{% endcodeblock %}
+
+
+
+{% codeblock lang:ruby %}
+
+class Myclass
+  class << self
+    attr_accessor :count  #创建类实例变量
+ end
+end
+
+Myclass.count=1
+p Myclass.count  #1
+
+
+Myclass.class_eval {  class<<self; attr_accessor :sum;end }
+
+Myclass.sum=1
+p Myclass.sum  #1
+
+{% endcodeblock %}
+
+
+
+
+
+
+
+
+
 
 
 
