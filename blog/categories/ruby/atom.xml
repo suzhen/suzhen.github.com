@@ -4,7 +4,7 @@
   <title><![CDATA[Category: ruby | 雨辰不语]]></title>
   <link href="http://suzhen.github.com/blog/categories/ruby/atom.xml" rel="self"/>
   <link href="http://suzhen.github.com/"/>
-  <updated>2014-02-23T11:43:54+08:00</updated>
+  <updated>2014-02-23T12:17:09+08:00</updated>
   <id>http://suzhen.github.com/</id>
   <author>
     <name><![CDATA[suzhen]]></name>
@@ -12,15 +12,6 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
-  
-  <entry>
-    <title type="html"><![CDATA[类中新增方法]]></title>
-    <link href="http://suzhen.github.com/blog/2013/10/16/lei-zhong-xin-zeng-fang-fa/"/>
-    <updated>2013-10-16T17:56:00+08:00</updated>
-    <id>http://suzhen.github.com/blog/2013/10/16/lei-zhong-xin-zeng-fang-fa</id>
-    <content type="html"><![CDATA[
-]]></content>
-  </entry>
   
   <entry>
     <title type="html"><![CDATA[关于defined?操作符]]></title>
@@ -1191,6 +1182,100 @@ attr_accessor,attr_reader,attr_writer都是创建实例变量(类实例变量,�
 </span><span class='line'>
 </span><span class='line'><span class="o">&lt;</span><span class="nb">p</span><span class="o">&gt;</span>
 </span></code></pre></td></tr></table></div></figure></notextile></div></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[require/load/autoload的区别和用法]]></title>
+    <link href="http://suzhen.github.com/blog/2012/12/03/importfile/"/>
+    <updated>2012-12-03T01:34:00+08:00</updated>
+    <id>http://suzhen.github.com/blog/2012/12/03/importfile</id>
+    <content type="html"><![CDATA[<p>首先我们建两个目录，一个命名rubylib，目录下有一个lib.rb文件，另一个目录命名rubyconfig,目录下有一个cfg.rb文件。</p>
+
+<p>lib.rb</p>
+
+<pre><code><div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="nb">puts</span> <span class="s2">&quot;I&#39;m lib&quot;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+</code></pre>
+
+<p>cfg.rb</p>
+
+<pre><code><div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="nb">puts</span> <span class="s2">&quot;I&#39;m config&quot;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+</code></pre>
+
+<p>再建立一个testrequire.rb文件</p>
+
+<pre><code><div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="nb">require</span> <span class="s2">&quot;./rubylib/lib&quot;</span>
+</span><span class='line'><span class="nb">puts</span> <span class="s2">&quot;hello,world&quot;</span>
+</span><span class='line'><span class="nb">require</span> <span class="s2">&quot;./rubylib/lib&quot;</span> <span class="c1">#遇到相同的文件，不再加载</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+</code></pre>
+
+<p>输出结果</p>
+
+<pre><code>I'm lib
+hello,world
+</code></pre>
+
+<p>再建立一个testload.rb文件</p>
+
+<pre><code><div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="nb">load</span> <span class="s2">&quot;./rubyconfig/cfg.rb&quot;</span>
+</span><span class='line'><span class="nb">puts</span> <span class="s2">&quot;hello,world&quot;</span>
+</span><span class='line'><span class="nb">load</span> <span class="s2">&quot;./rubyconfig/cfg.rb&quot;</span> <span class="c1">#无论是否加载过，都会加载</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+</code></pre>
+
+<p>输出结果</p>
+
+<pre><code>I'm config
+hello,world
+I'm config
+</code></pre>
+
+<p>说明：require和load同样都是用来加载文件。require的加载路径可以不写.rb,但是load就一定要写全文件名。require是只加载一次，如果有相同的文件，已经加载，则不再重复加载，用于加载库文件;而load是每次都会加载，无论是否已经加载过，常用于加载配置文件。
+<strong>require和load都表现为立即加载文件。而autoload则是使用到某个类时，才会去加载必要的文件。</strong></p>
+
+<p>建立一个mylib.rb的文件</p>
+
+<pre><code><div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="nb">puts</span> <span class="s2">&quot;I was loaded!&quot;</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">class</span> <span class="nc">MyLibrary</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+</code></pre>
+
+<p>使用require加载会立即加载</p>
+
+<pre><code>irb(main):001:0&gt; require 'mylibrary'
+I was loaded!
+=&gt; true
+</code></pre>
+
+<p>使用autoload只会在这个类被需要的时候，才去加载</p>
+
+<pre><code>irb(main):001:0&gt; autoload :MyLibrary, 'mylibrary'
+=&gt; nil
+irb(main):002:0&gt; MyLibrary.new
+I was loaded!
+=&gt; #&lt;MyLibrary:0x0b1jef&gt;
+</code></pre>
+
+<p>autoload不会被重复加载!</p>
+
+<p>如果有一些类或者模块一定会被用上，则使用require，如果不一定会被使用，才使用autoload。</p>
 ]]></content>
   </entry>
   
