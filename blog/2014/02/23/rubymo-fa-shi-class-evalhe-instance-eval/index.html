@@ -1,0 +1,572 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>RUBY魔法师(class_eval和instance_eval) - 雨辰不语</title>
+  <meta name="author" content="suzhen">
+
+  
+  <meta name="description" content="在RUBY的编程过程中对一个已经创建好的类，或者对象，进行一些运行时的改造，比如增加一个方法，添加一些变量，去除一些方法，或者引入一个module等，是经常会做的事。 我们先来看看对一个类的动态改造。 1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13 class Dummy end &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://suzhen.github.com/blog/2014/02/23/rubymo-fa-shi-class-evalhe-instance-eval/">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="雨辰不语" type="application/atom+xml">
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">雨辰不语</a></h1>
+  
+    <h2>记录学习中的点点滴滴</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:suzhen.github.com" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">RUBY魔法师(class_eval和instance_eval)</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-02-23T00:23:00+08:00" pubdate data-updated="true">Feb 23<span>rd</span>, 2014</time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>在RUBY的编程过程中对一个已经创建好的类，或者对象，进行一些运行时的改造，比如增加一个方法，添加一些变量，去除一些方法，或者引入一个module等，是经常会做的事。</p>
+
+<p>  我们先来看看对一个类的动态改造。</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'>  <span class="k">class</span> <span class="nc">Dummy</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="n">obj</span> <span class="o">=</span> <span class="no">Dummy</span><span class="o">.</span><span class="n">new</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="no">Dummy</span><span class="o">.</span><span class="n">class_eval</span> <span class="k">do</span>
+</span><span class='line'>    <span class="c1">#defs here go to Dummy</span>
+</span><span class='line'>    <span class="k">def</span> <span class="nf">say_hi</span>
+</span><span class='line'>      <span class="nb">puts</span> <span class="s2">&quot;hi&quot;</span>
+</span><span class='line'>    <span class="k">end</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="n">obj</span><span class="o">.</span><span class="n">say_hi</span> <span class="c1">#—&gt;hi</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>  当我们定义class的时候，什么实例方法都没有定义。之后，魔法师通过class_eval在运行时，去添加了实例方法say_hi。class_eval do ..end 里的代码，就等于是在 class Dummy ..end里定义的方法。</p>
+
+<p>  再看另一个类子：</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'>  <span class="no">Dummy</span><span class="o">.</span><span class="n">instance_eval</span> <span class="k">do</span>
+</span><span class='line'>    <span class="c1">#defs here go to Dummy’s eigenclass</span>
+</span><span class='line'>    <span class="k">def</span> <span class="nf">say_hello</span>
+</span><span class='line'>      <span class="nb">puts</span> <span class="s2">&quot;hello&quot;</span>
+</span><span class='line'>    <span class="k">end</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="no">Dummy</span><span class="o">.</span><span class="n">say_hello</span> <span class="err">＃—</span><span class="o">&gt;</span><span class="n">hello</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>魔法师又通过instance_eval在运行时，去添加了类方法say_hello。instance_eval do .. end里的代码，就等于在Dummy的eigenclass里了定义方法。</p>
+
+<p>  魔法师如果不用instance_eval ,在class_eval也可以定义类方法。</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'>  <span class="no">Dummy</span><span class="o">.</span><span class="n">class_eval</span> <span class="k">do</span>
+</span><span class='line'>    <span class="k">class</span> <span class="o">&lt;&lt;</span> <span class="nb">self</span>
+</span><span class='line'>      <span class="k">def</span> <span class="nf">say_bye</span>
+</span><span class='line'>        <span class="nb">puts</span> <span class="s2">&quot;bye&quot;</span>
+</span><span class='line'>      <span class="k">end</span>
+</span><span class='line'>    <span class="k">end</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'>  <span class="no">Dummy</span><span class="o">.</span><span class="n">say_bye</span> <span class="c1">#-&gt;bye</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>  我们来总结一下class_eval和instance_eval的区别：前者是改变class本身，在do..end里的代码被放入class Dummy …end 中，换成书中的句子就是改变了self. 而后者把所有代码都被放了Dummy.eigenclass里，但没有放在Dummy类中，这样就不会改变Dummy里原来的代码，换成书中的句子就是没有改变Self.</p>
+
+<p>  这两个魔法在RAILS里被无数次的使用。</p>
+
+<p>  对于一个类，实例方法是放在类里的，而类方法是放在这个类的eigenClass里的。
+  每个对象，都有自己的EigenClass,其中定义的方法都是这个对象（仅仅这个对象）的实例方法。</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'>
+</span><span class='line'>  <span class="n">obj</span> <span class="o">=</span> <span class="no">Dummy</span><span class="o">.</span><span class="n">new</span>
+</span><span class='line'>  <span class="k">class</span> <span class="o">&lt;&lt;</span> <span class="n">obj</span>
+</span><span class='line'>    <span class="k">def</span> <span class="nf">cry</span>
+</span><span class='line'>      <span class="nb">puts</span>  <span class="err">“</span><span class="n">wawa</span><span class="err">”</span>
+</span><span class='line'>    <span class="k">end</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'>  <span class="n">obj</span><span class="o">.</span><span class="n">cry</span> <span class="c1">#-&gt;wawa</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>  而instance_eval魔法正是打开eigenClass的钥匙。</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'>  <span class="n">obj</span><span class="o">.</span><span class="n">instace_eval</span> <span class="k">do</span>
+</span><span class='line'>    <span class="k">def</span> <span class="nf">cry</span>
+</span><span class='line'>      <span class="nb">puts</span>  <span class="err">“</span><span class="n">wawa</span><span class="err">”</span>
+</span><span class='line'>    <span class="k">end</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'>  <span class="n">obj</span><span class="o">.</span><span class="n">cry</span> <span class="c1">#-&gt; wawa</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>  ！！！发现在一个重大秘密：</p>
+
+<p>  class &lt;&lt; obj/class_name 是打开eigenClass类，obj/class_name.instance_eval也是打开eigenClass类。两者有什么区别?</p>
+
+<p>  答案就是在self上。</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'>  <span class="k">class</span> <span class="o">&lt;&lt;</span> <span class="n">obj</span><span class="o">/</span><span class="n">class_name</span>
+</span><span class='line'>    <span class="nb">self</span>    <span class="c1">#是指eigenclass</span>
+</span><span class='line'>  <span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>  而</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'>  <span class="n">obj</span><span class="o">/</span><span class="n">class_name</span><span class="o">.</span><span class="n">instance_eval</span> <span class="k">do</span>
+</span><span class='line'>    <span class="nb">self</span>  <span class="c1">#是指obj/class_name本身</span>
+</span><span class='line'>  <span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>  这是最最大的区别！！！切记！！ 了解这一点就能解释清楚以下的手段。</p>
+
+<p>  我们去获取到一个类或者对象的eigenClass,通常采用的方式是：</p>
+
+<p>  一、获取类的eigenclass：
+  方式一：</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'>  <span class="n">e</span> <span class="o">=</span> <span class="k">class</span> <span class="o">&lt;&lt;</span> <span class="no">Dummy</span>
+</span><span class='line'>    <span class="nb">self</span>
+</span><span class='line'>  <span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>  或者</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'>  <span class="n">e</span> <span class="o">=</span>  <span class="no">Dummy</span><span class="o">.</span><span class="n">instance_eval</span> <span class="k">do</span>
+</span><span class='line'>    <span class="k">class</span> <span class="o">&lt;&lt;</span> <span class="nb">self</span>
+</span><span class='line'>      <span class="nb">self</span>
+</span><span class='line'>    <span class="k">end</span>
+</span><span class='line'>  <span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>  方式二：</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'>  <span class="k">class</span> <span class="nc">Dummy</span>
+</span><span class='line'>    <span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">eigenclass</span>
+</span><span class='line'>      <span class="k">class</span> <span class="o">&lt;&lt;</span> <span class="nb">self</span>
+</span><span class='line'>        <span class="nb">self</span>
+</span><span class='line'>      <span class="k">end</span>
+</span><span class='line'>    <span class="k">end</span>
+</span><span class='line'>  <span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>  二、获取对象的eigenclass：</p>
+
+<p>  方式1：</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'>  <span class="k">class</span> <span class="nc">Dummy</span>
+</span><span class='line'>    <span class="k">def</span> <span class="nf">eigenclass</span>
+</span><span class='line'>          <span class="k">class</span> <span class="o">&lt;&lt;</span> <span class="nb">self</span>
+</span><span class='line'>              <span class="nb">self</span>
+</span><span class='line'>          <span class="k">end</span>
+</span><span class='line'>     <span class="k">end</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="n">obj</span> <span class="o">=</span>  <span class="no">Dummy</span><span class="o">.</span><span class="n">new</span>
+</span><span class='line'>  <span class="n">obj</span><span class="o">.</span><span class="n">eigenclass</span> <span class="err">获取</span><span class="n">obj</span><span class="err">的</span><span class="n">eigenclass</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>  方式2：</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'>    <span class="n">eigenclass</span> <span class="o">=</span> <span class="k">class</span> <span class="o">&lt;&lt;</span> <span class="n">obj</span>
+</span><span class='line'>      <span class="nb">self</span> <span class="c1">#此处的self代表了obj的eigenclass</span>
+</span><span class='line'>    <span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>  或者：</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'>  <span class="n">e</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">instance_eval</span> <span class="k">do</span>
+</span><span class='line'>    <span class="k">class</span> <span class="o">&lt;&lt;</span> <span class="nb">self</span>
+</span><span class='line'>      <span class="nb">self</span> <span class="c1">#此处的self代表了obj的eigenclass</span>
+</span><span class='line'>    <span class="k">end</span>
+</span><span class='line'>  <span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>  无论哪种方式都比较麻烦。魔法师会用一个特别的方式，直接获取到eigenclass。</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'>  <span class="no">Dummy</span><span class="o">.</span><span class="n">singleton_class</span>
+</span><span class='line'>  <span class="n">obj</span><span class="o">.</span><span class="n">sigleton_class</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>  再来看一个等式，做为就之前的一个总结，看懂了就说明，理解了。</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'>  <span class="no">Dummy</span><span class="o">.</span><span class="n">singleton_class</span><span class="o">.</span><span class="n">class_eval</span> <span class="p">{}</span>  <span class="o">==</span> <span class="no">Dummy</span><span class="o">.</span><span class="n">instance_class</span> <span class="p">{}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>  但是</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'>  <span class="no">Dummy</span><span class="o">.</span><span class="n">singleton_class</span><span class="o">.</span><span class="n">class_eval</span> <span class="p">{</span> <span class="nb">self</span> <span class="p">}</span> <span class="o">!=</span> <span class="no">Dummy</span><span class="o">.</span><span class="n">instance_eval</span> <span class="p">{</span> <span class="nb">self</span> <span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>  一、等号说明在｛｝里定义的方法都是Dummy的类方法。
+  二、不等号说明在｛｝中的self是有不同含义的。singleton_class.class_eval 中的self是指Dummy的eigenclass,而Dummy.instance_eval是指Dummy类本身</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'>  <span class="no">Dummy</span><span class="o">.</span><span class="n">singleton_class</span><span class="o">.</span><span class="n">class_eval</span> <span class="k">do</span>
+</span><span class='line'>    <span class="k">def</span> <span class="nf">say_hi</span>
+</span><span class='line'>      <span class="nb">puts</span> <span class="s2">&quot;hi&quot;</span>
+</span><span class='line'>    <span class="k">end</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'>  <span class="no">Dummy</span><span class="o">.</span><span class="n">instance_eval</span> <span class="k">do</span>
+</span><span class='line'>    <span class="k">def</span> <span class="nf">say_hello</span>
+</span><span class='line'>      <span class="nb">puts</span> <span class="s2">&quot;hello&quot;</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">end</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'>  <span class="no">Dummy</span><span class="o">.</span><span class="n">say_hi</span>
+</span><span class='line'>  <span class="no">Dummy</span><span class="o">.</span><span class="n">say_hello</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="nb">p</span> <span class="no">Dummy</span><span class="o">.</span><span class="n">singleton_class</span><span class="o">.</span><span class="n">instance_methods</span>    <span class="o">[</span><span class="ss">:say_hi</span><span class="p">,</span><span class="ss">:say_hello</span><span class="o">]</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="nb">p</span> <span class="no">Dummy</span><span class="o">.</span><span class="n">singleton_class</span><span class="o">.</span><span class="n">class_eval</span> <span class="p">{</span> <span class="nb">self</span> <span class="p">}</span> <span class="o">==</span> <span class="no">Dummy</span><span class="o">.</span><span class="n">instance_eval</span> <span class="p">{</span> <span class="nb">self</span> <span class="p">}</span> <span class="c1">#-&gt;false</span>
+</span><span class='line'>  <span class="nb">p</span> <span class="no">Dummy</span><span class="o">.</span><span class="n">singleton_class</span> <span class="c1">#--&gt; #&lt;Class:Dummy&gt;</span>
+</span><span class='line'>  <span class="nb">p</span> <span class="no">Dummy</span><span class="o">.</span><span class="n">singleton_class</span><span class="o">.</span><span class="n">class_eval</span> <span class="p">{</span> <span class="nb">self</span> <span class="p">}</span> <span class="c1">#--&gt; #&lt;Class:Dummy&gt;</span>
+</span><span class='line'>  <span class="nb">p</span> <span class="no">Dummy</span><span class="o">.</span><span class="n">instance_eval</span> <span class="p">{</span> <span class="nb">self</span> <span class="p">}</span> <span class="c1">#--&gt; Dummy</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>singleton_class在我们对方法的操作上有很多很多的用处，仔细写在RUBY魔法师（方法高级篇）</p>
+
+<p>看看以下例子，再看看我们的重大发现，顿时明白一切。</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'> <span class="n">obj</span> <span class="o">=</span> <span class="no">Dummy</span><span class="o">.</span><span class="n">new</span>
+</span><span class='line'>  <span class="k">class</span> <span class="o">&lt;&lt;</span> <span class="n">obj</span>
+</span><span class='line'>    <span class="k">def</span> <span class="nf">eigenclass_func</span>
+</span><span class='line'>      <span class="nb">self</span> <span class="c1">#此处的self代表了obj本身，而不是obj的eigenclass</span>
+</span><span class='line'>    <span class="k">end</span>
+</span><span class='line'>  <span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>  或者</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'>  <span class="k">def</span> <span class="nc">obj</span><span class="o">.</span><span class="nf">eigenclass_func</span>
+</span><span class='line'>    <span class="nb">self</span> <span class="c1">#此处的self代表了obj本身，而不是obj的eigenclass</span>
+</span><span class='line'>  <span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>  或者</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'>  <span class="n">e</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">instance_eval</span> <span class="k">do</span>
+</span><span class='line'>    <span class="nb">self</span> <span class="c1">#此处的self代表了obj本身，而不是obj的eigenclass</span>
+</span><span class='line'>  <span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">suzhen</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-02-23T00:23:00+08:00" pubdate data-updated="true">Feb 23<span>rd</span>, 2014</time>
+      
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2014/02/22/rubymo-fa-shi-injectyong-fa/" title="Previous Post: RUBY魔法师(inject用法)">&laquo; RUBY魔法师(inject用法)</a>
+      
+      
+        <a class="basic-alignment right" href="/blog/2014/02/23/rubyji-cheng-initializeshi-de-shun-xu/" title="Next Post: RUBY继承initialize时的顺序">RUBY继承initialize时的顺序 &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2014/02/23/rubymo-fa-shi-%28fang-fa-gao-ji-pian-%29/">RUBY魔法师（方法高级篇）</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/02/23/rubyzhi-lei-dui-xiang/">Ruby之类对象</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/02/23/rubymo-fa-shi-fang-wen-kong-zhi/">Ruby魔法师(访问控制)</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/02/23/rubymo-fa-shi-chu-shi-hua-dui-xiang/">RUBY魔法师(初始化对象)</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/02/23/rubyji-cheng-initializeshi-de-shun-xu/">RUBY继承initialize时的顺序</a>
+      </li>
+    
+  </ul>
+</section>
+
+
+
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2014 - suzhen -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

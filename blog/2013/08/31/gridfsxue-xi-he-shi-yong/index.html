@@ -1,0 +1,365 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>GridFS学习和使用 - 雨辰不语</title>
+  <meta name="author" content="suzhen">
+
+  
+  <meta name="description" content="GridFS是mongdb的一种存放任意大小文件的功能。把文件存在数据库中的好处是便于检索，备份，以前以后分布式的扩展。而普通document只能保存16MB的文件。 一 基本概念： GridFS将文件存入两个collections中。 fs.files 存放文件相关的数据，比如大小，上传日期， &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://suzhen.github.com/blog/2013/08/31/gridfsxue-xi-he-shi-yong/">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="雨辰不语" type="application/atom+xml">
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">雨辰不语</a></h1>
+  
+    <h2>记录学习中的点点滴滴</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:suzhen.github.com" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">GridFS学习和使用</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-08-31T22:59:00+08:00" pubdate data-updated="true">Aug 31<span>st</span>, 2013</time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>GridFS是mongdb的一种存放任意大小文件的功能。把文件存在数据库中的好处是便于检索，备份，以前以后分布式的扩展。而普通document只能保存16MB的文件。</p>
+
+<p>一 基本概念：</p>
+
+<p>  GridFS将文件存入两个collections中。</p>
+
+<p>  <strong>fs.files</strong>
+  存放文件相关的数据，比如大小，上传日期，文件类型等</p>
+
+<pre><code>{
+  "_id" : &lt;ObjectID&gt;,
+  "length" : &lt;num&gt;,
+  "chunkSize" : &lt;num&gt;
+  "uploadDate" : &lt;timestamp&gt;
+  "md5" : &lt;hash&gt;
+
+  "filename" : &lt;string&gt;,
+  "contentType" : &lt;string&gt;,
+  "aliases" : &lt;string array&gt;,
+  "metadata" : &lt;dataObject&gt;,
+}
+</code></pre>
+
+<p>  <strong>fs.chunks</strong>
+  存放文件的字节数据，每个chunks的document的大小是256k。一个大文件会变分割成多个document存放的。</p>
+
+<pre><code>{
+  "_id" : &lt;string&gt;, 
+  "files_id" : &lt;string&gt;,有索引
+  "n" : &lt;num&gt;,有索引
+  "data" : &lt;binary&gt;
+}
+</code></pre>
+
+<p>  一个files的document对应着一或者多个chunks的document。</p>
+
+<p>二 shell操作：</p>
+
+<pre><code>./mongofiles &lt;options&gt; &lt;commands&gt; &lt;filename&gt;
+
+option: -d 指定数据库
+    -h GridFS所在主机名。默认是本机，商品27017
+    -u 用户名
+    -p 密码
+
+command:
+      list 文件列表
+      search 根据文件名称查找
+      put 把文件存入数据库
+      get 从数据库中提出文件。注意：如果文件名是带路径的，那必须在当前文件夹下创建该目录结构才可以提出文件。
+      delete 删除数据库中文件
+</code></pre>
+
+<p>三 rails上传文件到GridFS:</p>
+
+<p>  在rails4.0环境下用到相关gem</p>
+
+<pre><code>gem "mongoid", github: 'mongoid/mongoid', ref: '11e45e5a30a45458b83db99ab6c9d9ccc337e66f'
+gem 'mongoid-grid_fs', github: 'ahoward/mongoid-grid_fs'
+
+gem "carrierwave"
+gem "carrierwave-mongoid", git: "git://github.com/jnicklas/carrierwave-mongoid.git"
+</code></pre>
+
+<p>  首先创建carrierwave的配置文件</p>
+
+<pre><code>touch config/initializers/carrierwave.rb
+</code></pre>
+
+<p>  内容如下：</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'> <span class="nb">require</span> <span class="s1">&#39;carrierwave/mongoid&#39;</span>
+</span><span class='line'>  <span class="no">CarrierWave</span><span class="o">.</span><span class="n">configure</span> <span class="k">do</span> <span class="o">|</span><span class="n">config</span><span class="o">|</span>
+</span><span class='line'>    <span class="n">config</span><span class="o">.</span><span class="n">storage</span> <span class="o">=</span> <span class="ss">:grid_fs</span>
+</span><span class='line'>    <span class="n">config</span><span class="o">.</span><span class="n">root</span> <span class="o">=</span> <span class="no">Rails</span><span class="o">.</span><span class="n">root</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s1">&#39;tmp&#39;</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">config</span><span class="o">.</span><span class="n">cache_dir</span> <span class="o">=</span> <span class="s2">&quot;uploads&quot;</span>
+</span><span class='line'>    <span class="n">config</span><span class="o">.</span><span class="n">grid_fs_access_url</span>   <span class="o">=</span> <span class="s2">&quot;/images&quot;</span>  <span class="c1">#@model.image_url.就是在数据库中的文件名称前，加上的路径(/images+数据库中的文件名称)。</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'>  
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>  在upload目录下</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'>  <span class="k">class</span> <span class="nc">PictureUploader</span> <span class="o">&lt;</span> <span class="no">CarrierWave</span><span class="o">::</span><span class="no">Uploader</span><span class="o">::</span><span class="no">Base</span>
+</span><span class='line'>    <span class="c1">#保存在数据库中的文件名</span>
+</span><span class='line'>    <span class="k">def</span> <span class="nf">store_dir</span>
+</span><span class='line'>       <span class="s2">&quot;uploads/</span><span class="si">#{</span><span class="n">model</span><span class="o">.</span><span class="n">class</span><span class="o">.</span><span class="n">to_s</span><span class="o">.</span><span class="n">underscore</span><span class="si">}</span><span class="s2">/</span><span class="si">#{</span><span class="n">mounted_as</span><span class="si">}</span><span class="s2">/</span><span class="si">#{</span><span class="n">model</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2">&quot;</span>
+</span><span class='line'>    <span class="k">end</span>
+</span><span class='line'>   <span class="k">end</span>
+</span><span class='line'>  
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>  这样就可以所文件保存到GridFS中了。</p>
+
+<p>  读取文件：
+  1、用脚本读取数据库的数据，在写在页面上。这种方式是比较效率低，只适合在开发环境中使用。</p>
+
+<p>  创建一个GridfsController负责读取GridFS中的文件，并写到页面上去。</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'> <span class="k">class</span> <span class="nc">GridfsController</span> <span class="o">&lt;</span> <span class="no">ActionController</span><span class="o">::</span><span class="no">Metal</span>
+</span><span class='line'>    <span class="k">def</span> <span class="nf">serve</span>
+</span><span class='line'>      <span class="n">gridfs_path</span> <span class="o">=</span> <span class="n">env</span><span class="o">[</span><span class="s2">&quot;PATH_INFO&quot;</span><span class="o">].</span><span class="n">gsub</span><span class="p">(</span><span class="s2">&quot;/images/&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+</span><span class='line'>      <span class="k">begin</span>
+</span><span class='line'>        <span class="n">gridfs_file</span> <span class="o">=</span> <span class="no">Mongoid</span><span class="o">::</span><span class="no">GridFS</span><span class="o">[</span><span class="n">gridfs_path</span><span class="o">]</span>
+</span><span class='line'>        <span class="nb">self</span><span class="o">.</span><span class="n">response_body</span> <span class="o">=</span> <span class="n">gridfs_file</span><span class="o">.</span><span class="n">data</span>
+</span><span class='line'>        <span class="nb">self</span><span class="o">.</span><span class="n">content_type</span> <span class="o">=</span> <span class="n">gridfs_file</span><span class="o">.</span><span class="n">content_type</span>
+</span><span class='line'>      <span class="k">rescue</span>
+</span><span class='line'>        <span class="nb">self</span><span class="o">.</span><span class="n">status</span> <span class="o">=</span> <span class="ss">:file_not_found</span>
+</span><span class='line'>        <span class="nb">self</span><span class="o">.</span><span class="n">content_type</span> <span class="o">=</span> <span class="s1">&#39;text/plain&#39;</span>
+</span><span class='line'>        <span class="nb">self</span><span class="o">.</span><span class="n">response_body</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+</span><span class='line'>      <span class="k">end</span>
+</span><span class='line'>    <span class="k">end</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'>  
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p> 所有对文件的访问路径都路由到这个controller中。</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'>   <span class="n">get</span> <span class="s2">&quot;/images/uploads/*path&quot;</span> <span class="o">=&gt;</span> <span class="s2">&quot;gridfs#serve&quot;</span>
+</span><span class='line'>  
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>  2、用nginx-gridfs的方法</p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">suzhen</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-08-31T22:59:00+08:00" pubdate data-updated="true">Aug 31<span>st</span>, 2013</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/mongodb/'>mongodb</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2013/08/31/guan-yu-defined-cao-zuo-fu/" title="Previous Post: 关于defined?操作符">&laquo; 关于defined?操作符</a>
+      
+      
+        <a class="basic-alignment right" href="/blog/2013/10/16/lei-zhong-xin-zeng-fang-fa/" title="Next Post: 类中新增方法">类中新增方法 &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2014/02/23/rubymo-fa-shi-%28fang-fa-gao-ji-pian-%29/">RUBY魔法师（方法高级篇）</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/02/23/rubyzhi-lei-dui-xiang/">Ruby之类对象</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/02/23/rubymo-fa-shi-fang-wen-kong-zhi/">Ruby魔法师(访问控制)</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/02/23/rubymo-fa-shi-chu-shi-hua-dui-xiang/">RUBY魔法师(初始化对象)</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/02/23/rubyji-cheng-initializeshi-de-shun-xu/">RUBY继承initialize时的顺序</a>
+      </li>
+    
+  </ul>
+</section>
+
+
+
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2014 - suzhen -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

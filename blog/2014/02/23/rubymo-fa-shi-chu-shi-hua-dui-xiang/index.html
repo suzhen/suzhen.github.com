@@ -1,0 +1,557 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>RUBY魔法师(初始化对象) - 雨辰不语</title>
+  <meta name="author" content="suzhen">
+
+  
+  <meta name="description" content="我们会创建一个class。通过这个class去new出一个又一个对象。这个类里有许多的对象实例变量，有的是需要new的时候去设置的。有的对象实例变量有一些默认值。我们该怎么去设计一个好的类呢。 最普通的设计方法： 1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17 &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://suzhen.github.com/blog/2014/02/23/rubymo-fa-shi-chu-shi-hua-dui-xiang/">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="雨辰不语" type="application/atom+xml">
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">雨辰不语</a></h1>
+  
+    <h2>记录学习中的点点滴滴</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:suzhen.github.com" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">RUBY魔法师(初始化对象)</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-02-23T11:00:00+08:00" pubdate data-updated="true">Feb 23<span>rd</span>, 2014</time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>  我们会创建一个class。通过这个class去new出一个又一个对象。这个类里有许多的对象实例变量，有的是需要new的时候去设置的。有的对象实例变量有一些默认值。我们该怎么去设计一个好的类呢。</p>
+
+<p>  最普通的设计方法：</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'>  <span class="k">class</span> <span class="nc">Volume</span>
+</span><span class='line'>      <span class="kp">attr_accessor</span> <span class="ss">:name</span><span class="p">,</span> <span class="ss">:size</span><span class="p">,</span> <span class="ss">:type</span><span class="p">,</span> <span class="ss">:owner</span><span class="p">,</span> <span class="ss">:date_created</span><span class="p">,</span> <span class="ss">:date_modified</span><span class="p">,</span> <span class="ss">:iscsi_target</span><span class="p">,</span> <span class="ss">:iscsi_portal</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="no">SYSTEM</span> <span class="o">=</span> <span class="mi">0</span>
+</span><span class='line'>      <span class="no">DATA</span> <span class="o">=</span> <span class="mi">1</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="n">args</span><span class="o">=</span><span class="p">{})</span>
+</span><span class='line'>        <span class="vi">@name</span> <span class="o">=</span> <span class="n">args</span><span class="o">[</span><span class="ss">:name</span><span class="o">]</span>
+</span><span class='line'>        <span class="vi">@size</span> <span class="o">=</span> <span class="n">args</span><span class="o">[</span><span class="ss">:size</span><span class="o">]</span>
+</span><span class='line'>        <span class="vi">@type</span> <span class="o">=</span> <span class="n">args</span><span class="o">[</span><span class="ss">:type</span><span class="o">].</span><span class="n">nil?</span> <span class="p">?</span> <span class="no">SYSTEM</span> <span class="p">:</span>  <span class="n">args</span><span class="o">[</span><span class="ss">:type</span><span class="o">]</span>
+</span><span class='line'>        <span class="vi">@owner</span> <span class="o">=</span> <span class="n">args</span><span class="o">[</span><span class="ss">:owner</span><span class="o">]</span>
+</span><span class='line'>        <span class="vi">@iscsi_target</span> <span class="o">=</span> <span class="n">args</span><span class="o">[</span><span class="ss">:iscsi_target</span><span class="o">]</span>
+</span><span class='line'>        <span class="vi">@iscsi_portal</span> <span class="o">=</span> <span class="n">args</span><span class="o">[</span><span class="ss">:iscsi_portal</span><span class="o">]</span>
+</span><span class='line'>        <span class="vi">@date_created</span> <span class="o">=</span> <span class="no">Time</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="mi">2013</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
+</span><span class='line'>        <span class="vi">@date_modified</span> <span class="o">=</span> <span class="no">Time</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="mi">2013</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
+</span><span class='line'>      <span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="k">def</span> <span class="nf">inspect</span>
+</span><span class='line'>        <span class="k">return</span> <span class="p">{</span><span class="ss">:name</span> <span class="o">=&gt;</span> <span class="vi">@name</span><span class="p">,</span>
+</span><span class='line'>                <span class="ss">:size</span> <span class="o">=&gt;</span> <span class="vi">@size</span><span class="p">,</span>
+</span><span class='line'>                <span class="ss">:type</span> <span class="o">=&gt;</span> <span class="vi">@type</span><span class="p">,</span>
+</span><span class='line'>                <span class="ss">:owner</span> <span class="o">=&gt;</span> <span class="vi">@owner</span><span class="p">,</span>
+</span><span class='line'>                <span class="ss">:date_created</span> <span class="o">=&gt;</span> <span class="vi">@date_created</span><span class="p">,</span>
+</span><span class='line'>                <span class="ss">:date_modified</span> <span class="o">=&gt;</span> <span class="vi">@date_modified</span><span class="p">,</span>
+</span><span class='line'>                <span class="ss">:iscsi_target</span> <span class="o">=&gt;</span> <span class="vi">@iscsi_target</span><span class="p">,</span>
+</span><span class='line'>                <span class="ss">:iscsi_portal</span> <span class="o">=&gt;</span> <span class="vi">@iscsi_portal</span> <span class="p">}</span>
+</span><span class='line'>      <span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="k">def</span> <span class="nf">to_json</span>
+</span><span class='line'>        <span class="nb">self</span><span class="o">.</span><span class="n">inspect</span><span class="o">.</span><span class="n">to_json</span>
+</span><span class='line'>      <span class="k">end</span>
+</span><span class='line'>  <span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>  要求：init的时候，可以传入配置项，也可以什么都不传。但无论传不传argument都要保证有@type的实例变量是有值的。</p>
+
+<p>  我们要对这个类进行重构。</p>
+
+<p>  用rspec 去保证重构的正确性。</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'>  <span class="nb">require</span> <span class="s2">&quot;./init&quot;</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="n">describe</span> <span class="s2">&quot;Object Init&quot;</span> <span class="k">do</span>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>    <span class="n">context</span> <span class="s2">&quot;all arguments are existing&quot;</span> <span class="k">do</span>
+</span><span class='line'>      <span class="n">before</span> <span class="ss">:each</span> <span class="k">do</span>
+</span><span class='line'>        <span class="vi">@v</span> <span class="o">=</span> <span class="no">Volume</span><span class="o">.</span><span class="n">new</span><span class="p">({</span><span class="ss">:name</span><span class="o">=&gt;</span><span class="s1">&#39;suzhen&#39;</span><span class="p">,</span><span class="ss">:size</span><span class="o">=&gt;</span><span class="s2">&quot;300&quot;</span><span class="p">,</span><span class="ss">:owner</span><span class="o">=&gt;</span><span class="s2">&quot;sue&quot;</span><span class="p">,</span><span class="ss">:iscsi_target</span><span class="o">=&gt;</span><span class="s2">&quot;&quot;</span><span class="p">,</span><span class="ss">:iscsi_portal</span><span class="o">=&gt;</span><span class="s2">&quot;&quot;</span><span class="p">,</span><span class="ss">:type</span><span class="o">=&gt;</span><span class="mi">0</span><span class="p">})</span>
+</span><span class='line'>      <span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="n">it</span> <span class="s2">&quot;Volume object name should has value&quot;</span> <span class="k">do</span> <span class="vi">@v</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">should</span> <span class="o">==</span> <span class="s2">&quot;suzhen&quot;</span> <span class="k">end</span>
+</span><span class='line'>      <span class="n">it</span> <span class="s2">&quot;Volume object size should has value&quot;</span> <span class="k">do</span> <span class="vi">@v</span><span class="o">.</span><span class="n">size</span><span class="o">.</span><span class="n">should</span> <span class="o">==</span> <span class="s2">&quot;300&quot;</span> <span class="k">end</span>
+</span><span class='line'>          <span class="n">it</span> <span class="s2">&quot;Volume object owner should has value&quot;</span> <span class="k">do</span> <span class="vi">@v</span><span class="o">.</span><span class="n">owner</span> <span class="o">==</span> <span class="s2">&quot;sue&quot;</span> <span class="k">end</span>
+</span><span class='line'>      <span class="n">it</span> <span class="s2">&quot;Volume object iscsi_portal should has value&quot;</span> <span class="k">do</span> <span class="vi">@v</span><span class="o">.</span><span class="n">iscsi_portal</span><span class="o">.</span><span class="n">should</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span> <span class="k">end</span>
+</span><span class='line'>      <span class="n">it</span> <span class="s2">&quot;Volume object iscsi_target should has value&quot;</span> <span class="k">do</span> <span class="vi">@v</span><span class="o">.</span><span class="n">iscsi_target</span><span class="o">.</span><span class="n">should</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span> <span class="k">end</span>
+</span><span class='line'>      <span class="n">it</span> <span class="s2">&quot;Volume object date_created should has value&quot;</span> <span class="k">do</span> <span class="vi">@v</span><span class="o">.</span><span class="n">date_created</span><span class="o">.</span><span class="n">should</span> <span class="o">==</span> <span class="no">Time</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="mi">2013</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span> <span class="k">end</span>
+</span><span class='line'>      <span class="n">it</span> <span class="s2">&quot;Volume object date_modified should has value&quot;</span> <span class="k">do</span> <span class="vi">@v</span><span class="o">.</span><span class="n">date_modified</span><span class="o">.</span><span class="n">should</span> <span class="o">==</span> <span class="no">Time</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="mi">2013</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span> <span class="k">end</span>
+</span><span class='line'>      <span class="n">it</span> <span class="s2">&quot;Volume object type should has value&quot;</span> <span class="k">do</span> <span class="vi">@v</span><span class="o">.</span><span class="n">type</span><span class="o">.</span><span class="n">should</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">end</span>
+</span><span class='line'>      <span class="n">it</span> <span class="s2">&quot;to json should &quot;</span> <span class="k">do</span>
+</span><span class='line'>       <span class="no">JSON</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="vi">@v</span><span class="o">.</span><span class="n">to_json</span><span class="p">)</span><span class="o">.</span><span class="n">should</span> <span class="o">==</span> <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="o">=&gt;</span><span class="s2">&quot;suzhen&quot;</span><span class="p">,</span> <span class="s2">&quot;size&quot;</span><span class="o">=&gt;</span><span class="s2">&quot;300&quot;</span><span class="p">,</span> <span class="s2">&quot;type&quot;</span><span class="o">=&gt;</span><span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;owner&quot;</span><span class="o">=&gt;</span><span class="s2">&quot;sue&quot;</span><span class="p">,</span> <span class="s2">&quot;date_created&quot;</span> <span class="o">=&gt;</span> <span class="no">Time</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="mi">2013</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">to_s</span><span class="p">,</span> <span class="s2">&quot;date_modified&quot;</span><span class="o">=&gt;</span> <span class="no">Time</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="mi">2013</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">to_s</span><span class="p">,</span> <span class="s2">&quot;iscsi_target&quot;</span><span class="o">=&gt;</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="s2">&quot;iscsi_portal&quot;</span><span class="o">=&gt;</span><span class="s2">&quot;&quot;</span><span class="p">}</span>
+</span><span class='line'>      <span class="k">end</span>
+</span><span class='line'>    <span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>    <span class="n">context</span> <span class="s2">&quot;none arguments&quot;</span> <span class="k">do</span>
+</span><span class='line'>      <span class="n">before</span> <span class="ss">:each</span> <span class="k">do</span>
+</span><span class='line'>        <span class="vi">@v</span> <span class="o">=</span> <span class="no">Volume</span><span class="o">.</span><span class="n">new</span>
+</span><span class='line'>      <span class="k">end</span>
+</span><span class='line'>      <span class="n">it</span> <span class="s2">&quot;Volume object name should nil&quot;</span> <span class="k">do</span> <span class="vi">@v</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">should</span> <span class="o">==</span> <span class="kp">nil</span> <span class="k">end</span>
+</span><span class='line'>      <span class="n">it</span> <span class="s2">&quot;Volume object size should nil&quot;</span> <span class="k">do</span> <span class="vi">@v</span><span class="o">.</span><span class="n">size</span><span class="o">.</span><span class="n">should</span> <span class="o">==</span> <span class="kp">nil</span> <span class="k">end</span>
+</span><span class='line'>          <span class="n">it</span> <span class="s2">&quot;Volume object owner should nil&quot;</span> <span class="k">do</span> <span class="vi">@v</span><span class="o">.</span><span class="n">owner</span> <span class="o">==</span> <span class="kp">nil</span> <span class="k">end</span>
+</span><span class='line'>      <span class="n">it</span> <span class="s2">&quot;Volume object iscsi_portal should nil&quot;</span> <span class="k">do</span> <span class="vi">@v</span><span class="o">.</span><span class="n">iscsi_portal</span><span class="o">.</span><span class="n">should</span> <span class="o">==</span> <span class="kp">nil</span> <span class="k">end</span>
+</span><span class='line'>      <span class="n">it</span> <span class="s2">&quot;Volume object iscsi_target should nil&quot;</span> <span class="k">do</span> <span class="vi">@v</span><span class="o">.</span><span class="n">iscsi_target</span><span class="o">.</span><span class="n">should</span> <span class="o">==</span> <span class="kp">nil</span> <span class="k">end</span>
+</span><span class='line'>      <span class="n">it</span> <span class="s2">&quot;Volume object date_created should nil&quot;</span> <span class="k">do</span> <span class="vi">@v</span><span class="o">.</span><span class="n">date_created</span><span class="o">.</span><span class="n">should</span> <span class="o">==</span> <span class="no">Time</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="mi">2013</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span> <span class="k">end</span>
+</span><span class='line'>      <span class="n">it</span> <span class="s2">&quot;Volume object date_modified should nil&quot;</span> <span class="k">do</span> <span class="vi">@v</span><span class="o">.</span><span class="n">date_modified</span><span class="o">.</span><span class="n">should</span> <span class="o">==</span> <span class="no">Time</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="mi">2013</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span> <span class="k">end</span>
+</span><span class='line'>      <span class="n">it</span> <span class="s2">&quot;Volume object type should has value&quot;</span> <span class="k">do</span> <span class="vi">@v</span><span class="o">.</span><span class="n">type</span><span class="o">.</span><span class="n">should</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">end</span>
+</span><span class='line'>      <span class="n">it</span> <span class="s2">&quot;to_json should &quot;</span> <span class="k">do</span>
+</span><span class='line'>        <span class="no">JSON</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="vi">@v</span><span class="o">.</span><span class="n">to_json</span><span class="p">)</span><span class="o">.</span><span class="n">should</span> <span class="o">==</span><span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="o">=&gt;</span><span class="kp">nil</span><span class="p">,</span> <span class="s2">&quot;size&quot;</span><span class="o">=&gt;</span><span class="kp">nil</span><span class="p">,</span> <span class="s2">&quot;type&quot;</span><span class="o">=&gt;</span><span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;owner&quot;</span><span class="o">=&gt;</span><span class="kp">nil</span><span class="p">,</span> <span class="s2">&quot;date_created&quot;</span><span class="o">=&gt;</span><span class="s2">&quot;2013-02-02 00:00:00 +0800&quot;</span><span class="p">,</span> <span class="s2">&quot;date_modified&quot;</span><span class="o">=&gt;</span><span class="s2">&quot;2013-02-02 00:00:00 +0800&quot;</span><span class="p">,</span> <span class="s2">&quot;iscsi_target&quot;</span><span class="o">=&gt;</span><span class="kp">nil</span><span class="p">,</span> <span class="s2">&quot;iscsi_portal&quot;</span><span class="o">=&gt;</span><span class="kp">nil</span><span class="p">}</span>
+</span><span class='line'>      <span class="k">end</span>
+</span><span class='line'>    <span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>  1，看到一长串的实例变量名称，会把这些名称放进一个array里，并且把这个array冻结起来，不能随意增加或者减少了。然后再遍历这个array,生成读写方法。</p>
+
+<p>  注释掉这句 # attr_accessor :name, :size, :type, :owner, :date_created, :date_modified, :iscsi_target, :iscsi_portal</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'>   <span class="no">ATTRIBUTES</span> <span class="o">=</span> <span class="o">[</span>
+</span><span class='line'>      <span class="ss">:name</span><span class="p">,</span> <span class="ss">:size</span><span class="p">,</span> <span class="ss">:type</span><span class="p">,</span> <span class="ss">:owner</span><span class="p">,</span> <span class="ss">:date_created</span><span class="p">,</span> <span class="ss">:date_modified</span><span class="p">,</span><span class="ss">:iscsi_target</span><span class="p">,</span><span class="ss">:iscsi_portal</span>
+</span><span class='line'>    <span class="o">].</span><span class="n">freeze</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="no">ATTRIBUTES</span><span class="o">.</span><span class="n">each</span> <span class="k">do</span> <span class="o">|</span><span class="kp">attr</span><span class="o">|</span>
+</span><span class='line'>      <span class="kp">attr_accessor</span> <span class="kp">attr</span>
+</span><span class='line'>    <span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<pre><code>test通过。
+</code></pre>
+
+<p>   还可以再简单一点</p>
+
+<p>  注释掉
+  ＃ ATTRIBUTES.each do |attr|</p>
+
+<pre><code>＃  attr_accessor attr
+</code></pre>
+
+<p>   ＃ end</p>
+
+<p>  改为：</p>
+
+<p>   attr_accessor *ATTRIBUTES</p>
+
+<p>   test通过。</p>
+
+<p>  2 修改initialize方法，因为有了之前的ATTRIBUTES数组，这里就可以不用一个个写方法赋值了。</p>
+
+<p>  注释掉原来的initialize方法</p>
+
+<p>  ＃def initialize(args={})</p>
+
+<pre><code>＃    @name = args[:name]
+</code></pre>
+
+<p>   ＃     @size = args[:size]</p>
+
+<pre><code>＃    @type = args[:type].nil? ? SYSTEM :  args[:type]
+＃    @owner = args[:owner]
+＃    @iscsi_target = args[:iscsi_target]
+ ＃   @iscsi_portal = args[:iscsi_portal]
+＃    @date_created = Time.new(2013,2,2)
+ ＃   @date_modified = Time.new(2013,2,2)
+</code></pre>
+
+<p>   ＃ end</p>
+
+<p>  改为：</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'>    <span class="no">DEFAULTS</span> <span class="o">=</span> <span class="p">{</span>
+</span><span class='line'>        <span class="ss">:type</span> <span class="o">=&gt;</span> <span class="no">SYSTEM</span>
+</span><span class='line'>      <span class="p">}</span><span class="o">.</span><span class="n">freeze</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="n">args</span><span class="o">=</span><span class="kp">nil</span><span class="p">)</span>
+</span><span class='line'>            <span class="n">args</span> <span class="o">=</span> <span class="n">args</span> <span class="p">?</span> <span class="no">DEFAULTS</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="p">:</span> <span class="no">DEFAULTS</span>
+</span><span class='line'>        <span class="no">ATTRIBUTES</span><span class="o">.</span><span class="n">each</span> <span class="k">do</span> <span class="o">|</span><span class="kp">attr</span><span class="o">|</span>
+</span><span class='line'>          <span class="k">if</span> <span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">key?</span><span class="p">(</span><span class="kp">attr</span><span class="p">))</span>
+</span><span class='line'>            <span class="nb">instance_variable_set</span><span class="p">(</span><span class="s2">&quot;@</span><span class="si">#{</span><span class="kp">attr</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">args</span><span class="o">[</span><span class="kp">attr</span><span class="o">]</span><span class="p">)</span>
+</span><span class='line'>          <span class="k">end</span>
+</span><span class='line'>        <span class="k">end</span>
+</span><span class='line'>    <span class="vi">@date_created</span> <span class="o">=</span> <span class="no">Time</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="mi">2013</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
+</span><span class='line'>           <span class="vi">@date_modified</span> <span class="o">=</span> <span class="no">Time</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="mi">2013</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
+</span><span class='line'>      <span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'>   <span class="nb">test</span><span class="err">通过。</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="mi">3</span> <span class="err">修改</span><span class="nb">inspect</span><span class="err">方法</span>
+</span><span class='line'>
+</span><span class='line'>   <span class="err">＃</span><span class="k">def</span> <span class="nf">inspect</span>
+</span><span class='line'>     <span class="err">＃</span>   <span class="k">return</span> <span class="p">{</span><span class="ss">:name</span> <span class="o">=&gt;</span> <span class="vi">@name</span><span class="p">,</span>
+</span><span class='line'>    <span class="err">＃</span>            <span class="ss">:size</span> <span class="o">=&gt;</span> <span class="vi">@size</span><span class="p">,</span>
+</span><span class='line'>      <span class="err">＃</span>          <span class="ss">:type</span> <span class="o">=&gt;</span> <span class="vi">@type</span><span class="p">,</span>
+</span><span class='line'>      <span class="err">＃</span>          <span class="ss">:owner</span> <span class="o">=&gt;</span> <span class="vi">@owner</span><span class="p">,</span>
+</span><span class='line'>      <span class="err">＃</span>          <span class="ss">:date_created</span> <span class="o">=&gt;</span> <span class="vi">@date_created</span><span class="p">,</span>
+</span><span class='line'>      <span class="err">＃</span>          <span class="ss">:date_modified</span> <span class="o">=&gt;</span> <span class="vi">@date_modified</span><span class="p">,</span>
+</span><span class='line'>       <span class="err">＃</span>         <span class="ss">:iscsi_target</span> <span class="o">=&gt;</span> <span class="vi">@iscsi_target</span><span class="p">,</span>
+</span><span class='line'>       <span class="err">＃</span>         <span class="ss">:iscsi_portal</span> <span class="o">=&gt;</span> <span class="vi">@iscsi_portal</span> <span class="p">}</span>
+</span><span class='line'>     <span class="err">＃</span> <span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">def</span> <span class="nf">inspect</span>
+</span><span class='line'>        <span class="no">ATTRIBUTES</span><span class="o">.</span><span class="n">inject</span><span class="p">({</span> <span class="p">})</span> <span class="k">do</span> <span class="o">|</span><span class="n">h</span><span class="p">,</span> <span class="kp">attr</span><span class="o">|</span>
+</span><span class='line'>          <span class="n">h</span><span class="o">[</span><span class="kp">attr</span><span class="o">]</span> <span class="o">=</span> <span class="nb">instance_variable_get</span><span class="p">(</span><span class="s2">&quot;@</span><span class="si">#{</span><span class="kp">attr</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</span><span class='line'>          <span class="n">h</span>
+</span><span class='line'>        <span class="k">end</span>
+</span><span class='line'>    <span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>   test通过。</p>
+
+<p>  可以把inspect的效果写的更绚一点</p>
+
+<p>  Hash[ *ATTRIBUTES.map { |attr| [ attr, instance_variable_get(&#8220;@#{attr}&#8221;) ] }.flatten ]</p>
+
+<p>   test通过。</p>
+
+<p>  4 如果我们觉得用initialize传入option这种方式太土，可以用一种更COOL的方式。</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'>  <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="o">&amp;</span><span class="n">block</span><span class="p">)</span>
+</span><span class='line'>       <span class="err">＃第一步先初始化默认值</span>
+</span><span class='line'>        <span class="no">ATTRIBUTES</span><span class="o">.</span><span class="n">each</span> <span class="k">do</span> <span class="o">|</span><span class="kp">attr</span><span class="o">|</span>
+</span><span class='line'>          <span class="nb">self</span><span class="o">.</span><span class="n">__send__</span> <span class="s2">&quot;</span><span class="si">#{</span><span class="kp">attr</span><span class="si">}</span><span class="s2">=&quot;</span><span class="p">,</span> <span class="no">DEFAULTS</span><span class="o">[</span><span class="kp">attr</span><span class="o">]</span>
+</span><span class='line'>        <span class="k">end</span>
+</span><span class='line'>          <span class="err">＃通过</span><span class="n">attr_access</span> <span class="err">定义的读写方法来赋值</span>
+</span><span class='line'>        <span class="k">yield</span><span class="p">(</span><span class="nb">self</span><span class="p">)</span> <span class="k">if</span> <span class="nb">block_given?</span>
+</span><span class='line'>    <span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>  那么初始化方式为：</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'>  <span class="vi">@v</span> <span class="o">=</span> <span class="no">Volume</span><span class="o">.</span><span class="n">new</span> <span class="p">{</span><span class="o">|</span><span class="n">v</span><span class="o">|</span> <span class="n">v</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;suzhen&quot;</span><span class="p">;</span> <span class="n">v</span><span class="o">.</span><span class="n">size</span> <span class="o">=</span> <span class="s2">&quot;300&quot;</span><span class="p">;</span><span class="n">v</span><span class="o">.</span><span class="n">owner</span><span class="o">=</span><span class="s2">&quot;sue&quot;</span><span class="p">;</span><span class="n">v</span><span class="o">.</span><span class="n">iscsi_target</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">;</span><span class="n">v</span><span class="o">.</span><span class="n">iscsi_portal</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">;</span><span class="n">v</span><span class="o">.</span><span class="n">date_created</span><span class="o">=</span><span class="no">Time</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="mi">2013</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">);</span><span class="n">v</span><span class="o">.</span><span class="n">date_modified</span><span class="o">=</span><span class="no">Time</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="mi">2013</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">)}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">suzhen</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-02-23T11:00:00+08:00" pubdate data-updated="true">Feb 23<span>rd</span>, 2014</time>
+      
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2014/02/23/rubyji-cheng-initializeshi-de-shun-xu/" title="Previous Post: RUBY继承initialize时的顺序">&laquo; RUBY继承initialize时的顺序</a>
+      
+      
+        <a class="basic-alignment right" href="/blog/2014/02/23/rubymo-fa-shi-fang-wen-kong-zhi/" title="Next Post: Ruby魔法师(访问控制)">Ruby魔法师(访问控制) &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2014/02/23/rubymo-fa-shi-%28fang-fa-gao-ji-pian-%29/">RUBY魔法师（方法高级篇）</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/02/23/rubyzhi-lei-dui-xiang/">Ruby之类对象</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/02/23/rubymo-fa-shi-fang-wen-kong-zhi/">Ruby魔法师(访问控制)</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/02/23/rubymo-fa-shi-chu-shi-hua-dui-xiang/">RUBY魔法师(初始化对象)</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/02/23/rubyji-cheng-initializeshi-de-shun-xu/">RUBY继承initialize时的顺序</a>
+      </li>
+    
+  </ul>
+</section>
+
+
+
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2014 - suzhen -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

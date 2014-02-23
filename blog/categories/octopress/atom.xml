@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: octopress | 雨辰不语]]></title>
+  <link href="http://suzhen.github.com/blog/categories/octopress/atom.xml" rel="self"/>
+  <link href="http://suzhen.github.com/"/>
+  <updated>2014-02-23T11:43:54+08:00</updated>
+  <id>http://suzhen.github.com/</id>
+  <author>
+    <name><![CDATA[suzhen]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[octopress学习笔记]]></title>
+    <link href="http://suzhen.github.com/blog/2012/12/03/octopressxue-xi-bi-ji/"/>
+    <updated>2012-12-03T01:14:00+08:00</updated>
+    <id>http://suzhen.github.com/blog/2012/12/03/octopressxue-xi-bi-ji</id>
+    <content type="html"><![CDATA[<p>octopress学习笔记(一)</p>
+
+<p>一些常用的命令和知识点</p>
+
+<p>克隆octopress.git到本地</p>
+
+<pre><code>git clone git://github.com/imathis/octopress.git octopress
+</code></pre>
+
+<p>进入octopress项目</p>
+
+<pre><code>cd octopress
+</code></pre>
+
+<p>此时需要我们来确定是否将ruby的版本切换到rvm中的1.9.3，输入"y",确定。</p>
+
+<pre><code>bundler install
+</code></pre>
+
+<p>octopress的大部分操作都是会通过本身的rake任务来完成的。
+可以通过查看Rakefile里的内容来查看，可以通过rake list来查看一些rake命令。</p>
+
+<p>octopress会把blog的主题放在一个.themes的目录下。
+我们的第一步就是要加载这个主题</p>
+
+<pre><code>rake install 
+</code></pre>
+
+<p>默认加载的主题是classic,加载的过程是把.themes的内容分别拷贝到./source和./sass两个目
+录里。sass里放的这个theme是css,而source里放的是theme的html文件和脚本、图片等。</p>
+
+<p>此时我们就可以预览一下这个新blog了。</p>
+
+<pre><code>rake preview 
+</code></pre>
+
+<p>这个命令会在目录下出现在一个public的子目录，里面就是程序生成的静态页面。
+在浏览器里输入0.0.0.0:4000，就可以看到样子了。是不是很简单。</p>
+
+<p>但是页面里显示得都是些原始的信息，需要我们去设置成自己的信息。就在目录下有一个
+_config.yml中可以配置。这个文件里有三部分，一是基本配置，配置
+url,title,subtitle,author等，二是配置Jekyll,这部分是设置一些静态文件的目录，路由规则
+等。第三部分是一些第三方的功能的设置，比如twitter,googleplus,disqus等。配置好了这些
+，再重新rake preview 一下就可以看到包含自己信息的blog了。</p>
+
+<p>我们开始写博客，也是用rake来创建。</p>
+
+<pre><code>rake new_post[博客标题]
+</code></pre>
+
+<p>这时候会在source目录下的_post目录下产生一个年月日和文章名称组成的<strong><strong>-</strong>-</strong>-
+**.markdown文件，我们编辑这个文件就行了。如果想删除这篇博客文章，通过删除这个文件就
+可以了。</p>
+
+<p>编辑好了文章，就需要将文章转化成相应的静态文件，放在public目录下了，这样才能访问到。</p>
+
+<pre><code>rake generate
+</code></pre>
+
+<p>我们刷新一下0.0.0.0:4000就可以看到新文章了。</p>
+
+<p>最后是我们要将博客发布到github上。就需要设置一下github的地址。</p>
+
+<pre><code>rake setup_github_pages
+</code></pre>
+
+<p>此时，输入***.github.com之后，会在目录下创建一个<em>deploy的目录，并且初始化为一个git仓
+库。
+当我们已经把markdown转化为public目录下的静态文件后，就可以通过deploy命令把public下的
+内容放到</em>deploy目录下，加入版本库，并上传到关联的github的master分支上。</p>
+
+<pre><code>rake deploy
+</code></pre>
+
+<p>一个命令所有事搞定。</p>
+
+<p>我们对博客的修改其实是对source和sass的修改，那么修改后的内容也应该用git管理起来，只
+需要</p>
+
+<pre><code>git add .
+git commit -m "修改内容"
+</code></pre>
+
+<p>就可以进行博客的管理。在.gitignore中系统已经自动的把_deploy和public这目录排除了。当
+然这个也是需要推送到github上source分支的。</p>
+
+<pre><code>git push origin source
+</code></pre>
+
+<p>如果我们需要在另一台机器上也可以写博客，那么就需要把***.github.com仓库克隆到本地。</p>
+
+<pre><code>    git clone git@github.com:suzhen/suzhen.github.com.git octopress
+</code></pre>
+
+<p>查看一下分支</p>
+
+<pre><code>    git branch
+</code></pre>
+
+<p>会发现有master和source两个分支，通过git checkout source 切换到代码分支就可以开发博客
+了。但是我们会发现<em>deploy这个文件并不存在。rake deploy命令并不能执行。所以我们还需要
+将deploy从github上克隆下来。在octopress目录里再git clone
+git@github.com:suzhen/suzhen.github.com.git </em>deploy 就可以了。这样我们就可以继续使用
+rake deploy命令了。</p>
+]]></content>
+  </entry>
+  
+</feed>

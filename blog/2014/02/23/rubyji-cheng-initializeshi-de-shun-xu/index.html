@@ -1,0 +1,505 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>RUBY继承initialize时的顺序 - 雨辰不语</title>
+  <meta name="author" content="suzhen">
+
+  
+  <meta name="description" content="RUBY继承initialize时的顺序 我们分析一下有几种继承情况： 1、一个子类继承一个父类。 1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12 class Parent def initialize(family_name) puts family_name puts &quot; &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://suzhen.github.com/blog/2014/02/23/rubyji-cheng-initializeshi-de-shun-xu/">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="雨辰不语" type="application/atom+xml">
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">雨辰不语</a></h1>
+  
+    <h2>记录学习中的点点滴滴</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:suzhen.github.com" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">RUBY继承initialize时的顺序</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-02-23T10:52:00+08:00" pubdate data-updated="true">Feb 23<span>rd</span>, 2014</time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>RUBY继承initialize时的顺序</p>
+
+<p>我们分析一下有几种继承情况：</p>
+
+<p>1、一个子类继承一个父类。</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'>  <span class="k">class</span> <span class="nc">Parent</span>
+</span><span class='line'>    <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="n">family_name</span><span class="p">)</span>
+</span><span class='line'>      <span class="nb">puts</span> <span class="n">family_name</span>
+</span><span class='line'>      <span class="nb">puts</span> <span class="s2">&quot;parent&quot;</span>
+</span><span class='line'>    <span class="k">end</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">class</span> <span class="nc">Son</span> <span class="o">&lt;</span> <span class="no">Parent</span>
+</span><span class='line'>    <span class="k">def</span> <span class="nf">initialize</span>
+</span><span class='line'>      <span class="nb">puts</span> <span class="s2">&quot;son&quot;</span>
+</span><span class='line'>    <span class="k">end</span>
+</span><span class='line'>  <span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>  子类和父类都有initialize方法，子类的会覆盖父类的同名方法，父类的initalize方法不会被执行。</p>
+
+<p>  Son.new #->  son</p>
+
+<p>  如果子类打算调用父类的initalize方法，就必须使用super明显的调用:</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'>  <span class="k">class</span> <span class="nc">Son</span> <span class="o">&lt;</span> <span class="no">Parent</span>
+</span><span class='line'>    <span class="k">def</span> <span class="nf">initialize</span>
+</span><span class='line'>      <span class="k">super</span><span class="p">(</span><span class="s2">&quot;sue&quot;</span><span class="p">)</span>
+</span><span class='line'>      <span class="nb">puts</span> <span class="s2">&quot;son&quot;</span>
+</span><span class='line'>    <span class="k">end</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="no">Son</span><span class="o">.</span><span class="n">new</span> <span class="c1">#-&gt;  sue parent son</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>2、一个类include一个module。</p>
+
+<p>  这种方式其实就是在让class继承一个“代理类”。这个“代理类”就是module生成的。</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'>  <span class="k">module</span> <span class="nn">Skill</span>
+</span><span class='line'>    <span class="k">def</span> <span class="nf">initialize</span>
+</span><span class='line'>      <span class="nb">puts</span> <span class="s2">&quot;skill&quot;</span>
+</span><span class='line'>    <span class="k">end</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">class</span> <span class="nc">Son</span>
+</span><span class='line'>    <span class="kp">include</span> <span class="no">Skill</span>
+</span><span class='line'>    <span class="k">def</span> <span class="nf">initialize</span>
+</span><span class='line'>      <span class="nb">puts</span> <span class="s2">&quot;son&quot;</span>
+</span><span class='line'>    <span class="k">end</span>
+</span><span class='line'>  <span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>  class和module都有initialize方法，class会覆盖module的同名方法，module的initalize方法不会被执行。</p>
+
+<p>  Son.new #->  son</p>
+
+<p>  如果class打算调用module的initalize方法，就必须使用super明显的调用:</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'>  <span class="k">class</span> <span class="nc">Son</span>
+</span><span class='line'>    <span class="kp">include</span> <span class="no">Skill</span>
+</span><span class='line'>    <span class="k">def</span> <span class="nf">initialize</span>
+</span><span class='line'>      <span class="k">super</span><span class="p">()</span>
+</span><span class='line'>      <span class="nb">puts</span> <span class="s2">&quot;son&quot;</span>
+</span><span class='line'>    <span class="k">end</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="no">Son</span><span class="o">.</span><span class="n">new</span> <span class="c1">#-&gt;  skill son</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>3、一个类include多个module.</p>
+
+<p>  一个class能include多个module,这是Matz在解决类多继承的一个方式。我们要理解这种继承方式，class能继承多类，但是一层一层的继承，继承是有顺序的，是线性的，不是菱型的。</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'>  <span class="k">module</span> <span class="nn">Skill</span>
+</span><span class='line'>    <span class="k">def</span> <span class="nf">initialize</span>
+</span><span class='line'>      <span class="nb">puts</span> <span class="s2">&quot;skill&quot;</span>
+</span><span class='line'>    <span class="k">end</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">module</span> <span class="nn">Interest</span>
+</span><span class='line'>    <span class="k">def</span> <span class="nf">initialize</span>
+</span><span class='line'>      <span class="nb">puts</span> <span class="s2">&quot;interest&quot;</span>
+</span><span class='line'>    <span class="k">end</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">class</span> <span class="nc">Son</span>
+</span><span class='line'>    <span class="kp">include</span> <span class="no">Skill</span>
+</span><span class='line'>    <span class="kp">include</span> <span class="no">Interest</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">def</span> <span class="nf">initialize</span>
+</span><span class='line'>      <span class="k">super</span><span class="p">()</span>
+</span><span class='line'>      <span class="nb">puts</span> <span class="s2">&quot;son&quot;</span>
+</span><span class='line'>    <span class="k">end</span>
+</span><span class='line'>  <span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>  Son类include两个module的顺序就非常的重要，这会影响到module的“代理类”在继承线上顺序的。这个例子中 可以认为是son类继承了interest代理类，interest代理类继承了skill代理类。   Son&lt;Interest&lt;Skill</p>
+
+<p>  同理：同名方法会被覆盖。super的调用只会调用父类，如果要调用祖父类的同名方法，就要在父类的同名方法中使用super。super只针对父类的同名方法，不能跨级调用。</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'>  <span class="k">module</span> <span class="nn">Skill</span>
+</span><span class='line'>    <span class="k">def</span> <span class="nf">initialize</span>
+</span><span class='line'>      <span class="nb">puts</span> <span class="s2">&quot;skill&quot;</span>
+</span><span class='line'>    <span class="k">end</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">module</span> <span class="nn">Interest</span>
+</span><span class='line'>    <span class="k">def</span> <span class="nf">initialize</span>
+</span><span class='line'>      <span class="k">super</span><span class="p">()</span>
+</span><span class='line'>      <span class="nb">puts</span> <span class="s2">&quot;interest&quot;</span>
+</span><span class='line'>    <span class="k">end</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">class</span> <span class="nc">Son</span>
+</span><span class='line'>    <span class="kp">include</span> <span class="no">Skill</span>
+</span><span class='line'>    <span class="kp">include</span> <span class="no">Interest</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">def</span> <span class="nf">initialize</span>
+</span><span class='line'>      <span class="k">super</span><span class="p">()</span>
+</span><span class='line'>      <span class="nb">puts</span> <span class="s2">&quot;son&quot;</span>
+</span><span class='line'>    <span class="k">end</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="no">Son</span><span class="o">.</span><span class="n">new</span> <span class="c1">#-&gt;  skill interest son</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>4、一个类即继承一个父类，又包含若干个module</p>
+
+<p>  分析这个情况，要明白：“代理类”要比真正要继承的类，更先被继承。在继承线上更靠前。根据以上的学习我们会很快写出结果：</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'>  <span class="k">module</span> <span class="nn">Skill</span>
+</span><span class='line'>    <span class="k">def</span> <span class="nf">initialize</span>
+</span><span class='line'>      <span class="k">super</span><span class="p">(</span><span class="s2">&quot;sue&quot;</span><span class="p">)</span>
+</span><span class='line'>      <span class="nb">puts</span> <span class="s2">&quot;skill&quot;</span>
+</span><span class='line'>    <span class="k">end</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">module</span> <span class="nn">Interest</span>
+</span><span class='line'>    <span class="k">def</span> <span class="nf">initialize</span>
+</span><span class='line'>      <span class="k">super</span><span class="p">()</span>
+</span><span class='line'>      <span class="nb">puts</span> <span class="s2">&quot;interest&quot;</span>
+</span><span class='line'>    <span class="k">end</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">class</span> <span class="nc">Parent</span>
+</span><span class='line'>    <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="n">family_name</span><span class="p">)</span>
+</span><span class='line'>      <span class="nb">puts</span> <span class="n">family_name</span>
+</span><span class='line'>      <span class="nb">puts</span> <span class="s2">&quot;parent&quot;</span>
+</span><span class='line'>    <span class="k">end</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">class</span> <span class="nc">Son</span> <span class="o">&lt;</span> <span class="no">Parent</span>
+</span><span class='line'>    <span class="kp">include</span> <span class="no">Skill</span>
+</span><span class='line'>    <span class="kp">include</span> <span class="no">Interest</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">def</span> <span class="nf">initialize</span>
+</span><span class='line'>      <span class="k">super</span><span class="p">()</span>
+</span><span class='line'>      <span class="nb">puts</span> <span class="s2">&quot;son&quot;</span>
+</span><span class='line'>    <span class="k">end</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="no">Son</span><span class="o">.</span><span class="n">new</span> <span class="c1">#-&gt; sue parent skill interest son</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>  牢记：super() 一定要(),不然会有问题！！！</p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">suzhen</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-02-23T10:52:00+08:00" pubdate data-updated="true">Feb 23<span>rd</span>, 2014</time>
+      
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2014/02/23/rubymo-fa-shi-class-evalhe-instance-eval/" title="Previous Post: RUBY魔法师(class_eval和instance_eval)">&laquo; RUBY魔法师(class_eval和instance_eval)</a>
+      
+      
+        <a class="basic-alignment right" href="/blog/2014/02/23/rubymo-fa-shi-chu-shi-hua-dui-xiang/" title="Next Post: RUBY魔法师(初始化对象)">RUBY魔法师(初始化对象) &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2014/02/23/rubymo-fa-shi-%28fang-fa-gao-ji-pian-%29/">RUBY魔法师（方法高级篇）</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/02/23/rubyzhi-lei-dui-xiang/">Ruby之类对象</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/02/23/rubymo-fa-shi-fang-wen-kong-zhi/">Ruby魔法师(访问控制)</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/02/23/rubymo-fa-shi-chu-shi-hua-dui-xiang/">RUBY魔法师(初始化对象)</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/02/23/rubyji-cheng-initializeshi-de-shun-xu/">RUBY继承initialize时的顺序</a>
+      </li>
+    
+  </ul>
+</section>
+
+
+
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2014 - suzhen -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

@@ -1,0 +1,1510 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>雨辰不语</title>
+  <meta name="author" content="suzhen">
+
+  
+  <meta name="description" content="1) 在程序中经常看见“__FILE__”（注意是左边两个下划线，右边两下划线）,这代
+表“__FILE__”所在文件的文件名。如果“__FILE__”是在require或者load的文件中，则是代
+表被包含文件的绝对路径和文件名。 a.rb文件: 1
+2 p __FILE__ b.rb文件 1 &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://suzhen.github.com/blog/page/2/">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="雨辰不语" type="application/atom+xml">
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">雨辰不语</a></h1>
+  
+    <h2>记录学习中的点点滴滴</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:suzhen.github.com" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div class="blog-index">
+  
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2012/12/13/ruby-shard/">点滴知识积累</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-12-13T02:09:00+08:00" pubdate data-updated="true">Dec 13<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>1) 在程序中经常看见“<strong>__FILE__</strong>”（注意是左边两个下划线，右边两下划线）,这代
+表“<strong>__FILE__</strong>”所在文件的文件名。如果“<strong>__FILE__</strong>”是在require或者load的文件中，则是代
+表被包含文件的绝对路径和文件名。</p>
+
+<p>a.rb文件:</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'> <span class="nb">p</span> <span class="bp">__FILE__</span>
+</span><span class='line'>  
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>b.rb文件</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'> <span class="nb">require</span> <span class="s2">&quot;./a&quot;</span>
+</span><span class='line'>  <span class="nb">p</span> <span class="bp">__FILE__</span>
+</span><span class='line'>  
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>执行ruby b.rb,输出：</p>
+
+<pre><code>/home/suzhen/workspace/a.rb
+b.rb 
+</code></pre>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2012/12/05/class-module-basic/">Class和module（基础篇）</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-12-05T00:39:00+08:00" pubdate data-updated="true">Dec 5<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>   Class与Module是ruby程序大框架的基本构成。掌握好class与module的设计，对ruby程序的层次的清晰和扩展是非常重要的。class名与module名也都是常量。和我们定义的常量在某种意义上说没有区别。第一个字母都必须是大写。Class类是Module的子类，class是一特殊形式的模块。我们应该牢记最顶级的类是Object,最顶级的模块就是Kernel。我们从最简单的开始了解和熟悉他们的用法与设计。</p>
+
+<p>   一、module的创建与mixin</p>
+
+<p>   例子一：</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'> <span class="c1">#创建module</span>
+</span><span class='line'>  <span class="k">module</span> <span class="nn">Mymodule</span>
+</span><span class='line'>    <span class="k">def</span> <span class="nf">say</span>
+</span><span class='line'>      <span class="nb">puts</span> <span class="s2">&quot;</span><span class="si">#{</span><span class="nb">self</span><span class="o">.</span><span class="n">class</span><span class="si">}</span><span class="s2"> say: hello&quot;</span>
+</span><span class='line'>    <span class="k">end</span>
+</span><span class='line'>    <span class="c1">#不仅能定义实例方法，还能定义常量，实例对象，类对象，宏，甚至是initialize方法。</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">module</span> <span class="nn">Myothermodule</span>
+</span><span class='line'>    <span class="k">def</span> <span class="nf">cry</span>
+</span><span class='line'>      <span class="nb">puts</span> <span class="s2">&quot;</span><span class="si">#{</span><span class="nb">self</span><span class="si">}</span><span class="s2"> cry: wawawa~&quot;</span>
+</span><span class='line'>    <span class="k">end</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="c1">#在类中引用module</span>
+</span><span class='line'>  <span class="k">class</span> <span class="nc">Myfirstclass</span>
+</span><span class='line'>    <span class="kp">include</span> <span class="no">Mymodule</span> <span class="c1">#include说明module里的方法是被当作实例方法被引用的,方法里的self代表对象</span>
+</span><span class='line'>    <span class="kp">extend</span> <span class="no">Myothermodule</span> <span class="c1">#extend说明module里的方法是被当作类方法被引用的，方法里的self代表类</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c1">#无论哪种引用，都要把module里的代码从头到底执行一遍，和定义类一样。</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'> <span class="n">fobj</span><span class="o">=</span><span class="no">Myfirstclass</span><span class="o">.</span><span class="n">new</span>
+</span><span class='line'>  <span class="n">fobj</span><span class="o">.</span><span class="n">say</span> <span class="c1">#Myfirstclass say : hello</span>
+</span><span class='line'>  <span class="no">Myfirstclass</span><span class="o">.</span><span class="n">cry</span> <span class="c1">#Myothermodule say: wawawa~</span>
+</span><span class='line'>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>可以用类的included_modules方法查看该类包含了多少个module，当然不包括extend的。</p>
+
+<pre><code>Myclass.included_modules 
+</code></pre>
+
+<p>例子二：
+我们还可以先不用在类里面混入模块，而是在类的实例里混入模块，可以达到同样的效果。</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'> <span class="k">module</span> <span class="nn">Mymodule</span>
+</span><span class='line'>    <span class="k">def</span> <span class="nf">say</span>
+</span><span class='line'>       <span class="nb">puts</span> <span class="s2">&quot;hello&quot;</span>
+</span><span class='line'>    <span class="k">end</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'>  <span class="k">class</span> <span class="nc">Myclass</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>*用实例对象extend模块就是实例方法</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'> <span class="n">obj</span> <span class="o">=</span> <span class="no">Myclass</span><span class="o">.</span><span class="n">new</span>
+</span><span class='line'>  <span class="n">obj</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="no">Mymodule</span><span class="p">)</span>
+</span><span class='line'>  <span class="n">obj</span><span class="o">.</span><span class="n">say</span> <span class="c1">#hello</span>
+</span><span class='line'>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>*用动态派发的方式也可以mixin一个模块</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'> <span class="no">Myclass</span><span class="o">.</span><span class="n">send</span> <span class="ss">:include</span><span class="p">,</span><span class="no">Mymodule</span>
+</span><span class='line'>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>*用类extend模块就是类方法</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'> <span class="no">Myclass</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="no">Mymodule</span><span class="p">)</span>
+</span><span class='line'>  <span class="no">Myclass</span><span class="o">.</span><span class="n">say</span> <span class="c1">#hello</span>
+</span><span class='line'>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>   以上的写法更多的是用在module的callback中</p>
+
+<p>说明：module的作用之一是把若干类中，共有的逻辑部分提出来，起到“一处定义修改，所有引入”均可以改动的意义，目的是为了更好的组织类方法和实例方法。
+我们可以把两个module放在别外一个文件内module.rb，在class文件里只要需要引用(require &#8220;路径/module&#8221;)就可以使用。
+重构代码的一步。mixin从技术层次理解，就是ruby自动创建了一个module名的代理类，并且让Myfirstclass类继承了这个代理类。实现一个类可以继承多个类的效果。
+比如fobj或者sobj寻找方法，会先从自身类去找，如果找不到就从自身类的代理类去找，还找不到再从父类去找，如果还找不到，就去父类的代理找，一直向上。如果在某一处找到了，就停止寻找了。
+还有一点要注意的是同名方法的查找,后面模块的引用方法覆盖前面模块的引用方法的. 如下例子</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'> <span class="k">module</span> <span class="nn">Pmodule</span>
+</span><span class='line'>    <span class="k">def</span> <span class="nf">say</span>
+</span><span class='line'>       <span class="nb">puts</span> <span class="s2">&quot;proxy say: hello&quot;</span>
+</span><span class='line'>             <span class="k">super</span>
+</span><span class='line'>    <span class="k">end</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">class</span> <span class="nc">Fclass</span>
+</span><span class='line'>    <span class="k">def</span> <span class="nf">say</span>
+</span><span class='line'>      <span class="nb">puts</span> <span class="s2">&quot;father say:hello&quot;</span>
+</span><span class='line'>    <span class="k">end</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">class</span> <span class="nc">Sclass</span><span class="o">&lt;</span><span class="no">Fclass</span>
+</span><span class='line'>    <span class="kp">include</span> <span class="no">Pmodule</span>
+</span><span class='line'>    <span class="k">def</span> <span class="nf">say</span>
+</span><span class='line'>     <span class="nb">puts</span> <span class="s2">&quot;son say:hello&quot;</span>
+</span><span class='line'>     <span class="k">super</span>
+</span><span class='line'>    <span class="k">end</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="n">obj</span><span class="o">=</span><span class="no">Sclass</span><span class="o">.</span><span class="n">new</span>
+</span><span class='line'>  <span class="n">obj</span><span class="o">.</span><span class="n">say</span>
+</span><span class='line'>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>输出：</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'> <span class="s2">&quot;son say:hello&quot;</span>
+</span><span class='line'>  <span class="s2">&quot;proxy say:hello&quot;</span>    <span class="c1">#super指向了module的方法say，而不是父类的say</span>
+</span><span class='line'>  <span class="s2">&quot;father say:hello&quot;</span>
+</span><span class='line'>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>   二、module与class的区别和理解</p>
+
+<p>   1、module是不能实例对象的，也就是module不能拥有自己的实例变量。在module里的实例变量只能被混入的类的使用。但是常量可以直接使用。</p>
+
+<pre><code> module Mymodule
+   PI=3.14
+ end
+ class Myclass
+   PI=3.14
+ end
+
+ Mymodule::PI #3.14
+ Myclass::PI  #3.14
+</code></pre>
+
+<p>   2、module中的定义方法如果不是module的单例方法，只能混入类的被类或者类的对象执行。但如果是module的单例方法，那么可以直接执行，但不能被混入类中无论是(include,还是extend)。</p>
+
+<pre><code> module Mymodule
+    def self.say
+        puts "#{self} say: hello"
+    end
+    def cry
+        puts "wawawa~"
+    end
+ end   
+ Mymodule.say  #Mymodule say:hello
+ Mymodule.cry   #error
+</code></pre>
+
+<p>我们可以把这个module使用一个更显得专业的写法</p>
+
+<pre><code> module Mymodule
+   class&lt;&lt;self
+      def say
+          puts "#{self} say: hello"
+      end
+   end
+ end   
+ Mymodule.say  #Mymodule say:hello
+</code></pre>
+
+<p>既然单例方法可以直接使用，那么如果我们写一个宏的话，那么也可以直接引用变量了。</p>
+
+<p>另一个例子：</p>
+
+<pre><code> module Mymodule
+  class&lt;&lt;self
+    attr_accessor :name
+    def say
+        self.name="suzhen"
+        puts "#{self.name} say: hello"
+    end
+  end
+ end
+ Mymodule.say  # suzhen.name say: hello
+ puts Mymodule.name #suzhen
+</code></pre>
+
+<p>说明：name将成为Mymodule的一个变量一样可以使用了。非常的cool，感谢有ruby的单例方法。
+<strong>切记如果是module的单例方法混入是类里是没有用的。</strong></p>
+
+<p>三，module与class的嵌套
+   module里面可以嵌套若干个module，也可以嵌套若干个classs,class里面可以嵌套若干个class,也可以嵌套若干个module</p>
+
+<pre><code>module Mymodule
+  module Myothermodule
+    PI=3.14
+  end
+end
+
+puts Mymodule::Myothermodule::PI
+</code></pre>
+
+<p>输出：#3.14</p>
+
+<pre><code>class Myclass
+  module Mymodule
+    PI=3.14
+    def self.say(who)
+      Inclass.new.say(who)
+    end
+  end
+  class Inclass
+    def say(who)
+     puts "#{who},hello,world"
+    end
+  end
+  def sound
+    Inclass.new.say(self.class::Mymodule::PI)
+  end
+end
+puts Myclass::Mymodule::PI  #3.14
+puts Myclass::Mymodule.say("suzhen")  #suzhen,hello world
+puts Myclass.new.sound #3.14,hello world
+</code></pre>
+
+<p>   现在讨论一下嵌套的意义：
+   module嵌套class的意义就像namespace一样，可以把一部分相关的类逻辑上分开。
+   class里嵌套module也是同样的作用。我们在元编程中会，会打开一个类，把自己的逻辑写进去，这样我们就需要用一个module来把自己的逻辑隔开。好比一个独立的逻辑空间，该moduel通过class&lt;&lt;self&#8230;end使自身也带有方法，属性等。</p>
+
+<p>   这里有两个非常有用的方法：一个是来判断一个类或者模块里是否嵌套着别一个类或者模块。二个是来获取这个名称的类或者模块。</p>
+
+<pre><code>Mymodule.const_defined?("Myothermodule") 
+Mymodule.const_get("ClassMethods").class #Module
+</code></pre>
+
+<p>   通常会这种用：</p>
+
+<pre><code>base.extend const_get("ClassMethods") if const_defined?("ClassMethods")
+</code></pre>
+
+<p>   四、module的callback方法
+   module被include后会有一个callback的方法，我们可以重写这个方法来完成一些事。</p>
+
+<p>   例子一：</p>
+
+<pre><code>   module Mymodule
+     def self.included(cls)
+    puts "minix in #{cls}"
+     end
+   end
+
+   class Myclass
+      include Mymodule
+   end
+
+   输出：
+   minix in Myclass
+</code></pre>
+
+<p>   如果是这个module被extend则不会callback这个方法</p>
+
+<p>   说明：这个callback有一个非常有用的技巧可以用到。可以解决怎么在一个module中即有实例方法，又有类方法，而在混入类中只需要include就可以了。</p>
+
+<p>   例子二：</p>
+
+<pre><code>   module Base
+       #实例方法
+       def show  
+      puts "You came here!"  
+       end  
+
+       #扩展类方法  
+       def self.included(base)  
+      #额外创建几个类方法
+      def base.say  
+        puts "I'm strong!"  
+      end  
+      #混入类方法
+      base.extend(ClassMethods)  
+       end  
+
+       #类方法  
+       module ClassMethods  
+     def hello  
+       puts "Hello baby!"  
+     end  
+       end  
+   end  
+
+  class Bus  
+    include Base  
+   end 
+
+  Bus.new.show
+  Bus.say  
+  Bus.hello 
+</code></pre>
+
+<p>   五、module依赖另一个module的方式和问题</p>
+
+<p>例子一：</p>
+
+<pre><code>module Mymodule
+  def say
+    puts "#{self.name} say: hello" #这个self还是类或者类对象
+  end
+end
+
+module Myren
+  include Mymodule
+end
+
+class Myclass
+  include Myren
+  def name
+    name="suzhen"
+    name
+  end
+end
+
+a = Myclass.new
+a.say  #suzhen say:hello
+</code></pre>
+
+<p>   会出现的问题在是callback上</p>
+
+<pre><code>   module Mymodule
+     def self.included(base)
+       puts base  #Myren 而不是Myclass
+     end
+   end
+
+   module Myren
+     include Mymodule
+     def self.included(base)
+       puts base #这里才是Myclass
+     end
+   end
+
+   class Myclass
+     include Myren
+   end
+
+   a = Myclass.new
+</code></pre>
+
+<p>   问题：如果我想在Mymodule的included中做一些针对混入类的操作，就变的不可能了，因为此时的base是中间的那个module了，而不是混入类了。解决这个问题的笨方法就是</p>
+
+<p>   Myren中去掉include Mymodule,类Myclass中引入两个module</p>
+
+<pre><code>class Myclass
+  include Myren,Mymodule
+end  
+</code></pre>
+
+<p>   但这么做会有一个问题就是。有时候我们只想引用一个Myren，那就没办法了。那么怎么解决这个问题？Rails里有一个模块可以帮我们解决这个问题。</p>
+
+<p>   例子二：</p>
+
+<pre><code>require 'rubygems'
+require 'active_support/concern'
+module Mymodule
+   extend ActiveSupport::Concern
+   included do  
+     puts self  #Myclass
+   end
+end
+
+module Myren
+  extend ActiveSupport::Concern
+  include Mymodule
+  included do
+    puts self  #Myclass
+  end
+end
+
+class Myclass
+  include Myren
+end
+
+a = Myclass.new
+</code></pre>
+
+<p>   首先引入active_support/concern文件，在两个module中分别加入extend ActiveSupport::Concern，这样两个模块就不要再用自己的callback函数了。而是改成 included do &#8230; end
+   这个模块中的self就是混入类本身了。神奇的是不光为你做了这些，还省了你在一个module中定义实例方法和类方法的技巧。只需要把类方法放在一个名叫：ClassMethods的module里即可，非常的方便。</p>
+
+<p>   例子三：</p>
+
+<pre><code>require 'rubygems'
+require 'active_support/concern'
+module Mymodule
+  extend ActiveSupport::Concern
+  module ClassMethods
+    def say
+      puts "hello"
+    end
+  end
+
+  module InstanceMethods #也可不放把实例方法放在这个module里。
+    def cry
+     puts "wawawa~"    
+    end
+  end
+end
+
+class Myclass
+  include Mymodule
+end
+
+Myclass.say #hello
+Myclass.new.cry #wawawa
+</code></pre>
+
+<p>  在ruby的世界中说是针对类进行逻辑结构的搭建，不如说是针对模块的逻辑结构搭建。大量的逻辑会写在module中，而不是直接写在类的，因为那样的重用性会很差。
+  良好的程序结构就是有不同的module和class在不同的层次上发挥着作用。比如：如果我们打一个别人的类，那想写点类方法，其实是很危险的，很容易就出现猴子补丁的情况。
+  那么干脆新建一个module,然后让那些类方法，成为module的单例方法，就可以类似类方法的调用了。Redis::search::query()</p>
+
+<p>  六、class也有一个callback方法，就是继承后self.inherited方法,如果class被继承就会callback这个方法，如果class的子类再被继承同样也会callback该class这个方法。</p>
+
+<pre><code>class Myclass
+  def self.inherited(subclass)
+    p subclass
+  end
+end
+
+class Mysubclass&lt;Myclass
+end
+
+class Mygrandsonclass&lt;Mysubclass
+end
+</code></pre>
+
+<p>输出：</p>
+
+<pre><code>Mysubclass
+Mygrandsonclass
+</code></pre>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2012/12/03/rubyvar/">Ruby中的变量</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-12-03T02:45:00+08:00" pubdate data-updated="true">Dec 3<span>rd</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>ruby上的变量分为局部变量(local variables)，全局变量(global variables)，类的实例变量(class instance variables)，对象的实例变量(object instance variables)和类变量(class variables)。每个变量的
+作用，特性和作用域都有所不同。首先要对这些变量有充分深刻的认识,细细抠它们之间的区别
+，才能在以后的应用中准确的使用。</p>
+
+<p>1、定义变量</p>
+
+<p> 局部变量直接以小写字母，或者下划线开始，如：</p>
+
+<pre><code>tmp=[]
+_tmp=true
+</code></pre>
+
+<p> 以$开头的变量是全局变量,如：</p>
+
+<pre><code>$config= {:site=&gt;"bizmass.com"}
+</code></pre>
+
+<p> 类的实例变量和对象的实例变量，即实例变量用@开头，如：</p>
+
+<pre><code>@name="suzhen"
+</code></pre>
+
+<p> 类变量用@@开头，如：</p>
+
+<pre><code>@@count=1
+</code></pre>
+
+<p>2、变量的区别和用法</p>
+
+<p>1）局部变量会存在的范围：
+ proc{&#8230;} <br/>
+ lambda do..end
+ def&#8230;end <br/>
+ class&#8230;end <br/>
+ module&#8230;end<br/>
+ 局部变量属于所在的作用域，它的生命起始于声明处，结束于该声明所在的块、方法定义、类
+、模块定义的结尾。随着作用域的结束，局部变量的生命也将结束。如果局部变量在生命期内，
+变包含在一个闭包中，它的生命会因为这个闭包在作用域结束的时间得到延续。</p>
+
+<p>2）全局变量会在程序的任何一个地方定义，在不同的类/模块/所在的范围里都可以读取和改变
+。全局变量是唯一的。
+   注意：应谨慎使用全局变量.由于在任何地方都可以被写因此他们相当危险.滥用全局变量会
+导致很难隔离臭虫;同时也视为程序的设计未经严格考虑.当你发现必须要使用全局变量时,记得
+给它一个不会在其它地方一不小心就用到的描述性名字，避免在其它地方变无意修改。</p>
+
+<pre><code>global_variables #查看所有全局变量
+</code></pre>
+
+<p>  全局变量的改变是可以被跟踪的。如果它的值被改变，就会执行一个proc。像是一个触发器。</p>
+
+<pre><code>trace_var :$x,proc{ p "$x is now #{$x}"  }
+
+ruby&gt; $x = 5 
+
+$x is now 5 
+</code></pre>
+
+<p>3）类变量要声明在类定义中，类变量是<strong>类</strong>、<strong>子类</strong>，<strong>类的实例对象</strong>，<strong>子类实例对象</strong>中共
+享的一个变量，即该类整个家族中在类方法中，又可以在实例方法中共享该变量。访类族对类变
+量影响是共同承担的。
+<strong>但是子类中定义的类变量，在父量中是不以被访问到的,类变量是向下共享的.</strong></p>
+
+<p>类变量的作用域就在声明所在类族和类的对象中。不同类族内有相关名字的类变量，但这是不同
+的类变量，只是名称一样罢了,彼此不影响.</p>
+
+<p><strong>注意：要先定义，直接使用异常，在定义一个类变量时，必须要马上赋值。</strong></p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'> <span class="k">class</span> <span class="nc">Mysuperclass</span>
+</span><span class='line'>    <span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">say</span>
+</span><span class='line'>      <span class="vc">@@a</span>
+</span><span class='line'>    <span class="k">end</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'>  <span class="k">class</span> <span class="nc">Myclass</span><span class="o">&lt;</span><span class="no">Mysuperclass</span>
+</span><span class='line'>    <span class="vc">@@a</span><span class="o">=</span><span class="s2">&quot;suzhen&quot;</span>
+</span><span class='line'>    <span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">say</span>
+</span><span class='line'>      <span class="vc">@@a</span>
+</span><span class='line'>    <span class="k">end</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'>  <span class="k">class</span> <span class="nc">Mysubclass</span><span class="o">&lt;</span><span class="no">Myclass</span>
+</span><span class='line'>    <span class="k">def</span> <span class="nf">play</span>
+</span><span class='line'>     <span class="vc">@@a</span>
+</span><span class='line'>    <span class="k">end</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>  <span class="nb">p</span> <span class="no">Myclass</span><span class="o">.</span><span class="n">say</span> <span class="c1">#suzhen</span>
+</span><span class='line'>  <span class="nb">p</span> <span class="no">Mysubclass</span><span class="o">.</span><span class="n">new</span><span class="o">.</span><span class="n">play</span> <span class="c1">#suzhen</span>
+</span><span class='line'>  <span class="nb">p</span> <span class="no">Mysuperclass</span><span class="o">.</span><span class="n">say</span> <span class="c1">#报没有申明类变量的错误</span>
+</span><span class='line'>  
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>这和全局变量不一样。类变量是私有的，在类外无法直接访问，你只能通过实例方法和类方法去
+访问它。</p>
+
+<p>模块中定义的类变量(模块变量)被所有包含该模块的类所共享。</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'> <span class="k">module</span> <span class="nn">TestModule</span>
+</span><span class='line'>    <span class="vc">@@foo</span> <span class="o">=</span> <span class="mi">10</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'>  <span class="k">class</span> <span class="nc">Klass</span>
+</span><span class='line'>    <span class="kp">include</span> <span class="no">Foo</span>
+</span><span class='line'>    <span class="nb">p</span> <span class="vc">@@foo</span> <span class="o">+=</span> <span class="mi">1</span>          <span class="c1"># =&gt; 11</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'>  <span class="k">class</span> <span class="nc">Base</span>
+</span><span class='line'>    <span class="kp">include</span> <span class="no">Foo</span>
+</span><span class='line'>    <span class="nb">p</span> <span class="vc">@@foo</span> <span class="o">+=</span> <span class="mi">2</span>          <span class="c1"># =&gt; 12</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'>  
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>但是类变量有一个问题就是在类外面，也是随时可以改变这个变量值的。这是一个危险。
+另一个例子：</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'> <span class="k">class</span> <span class="nc">Myclass</span>
+</span><span class='line'>    <span class="vc">@@koko</span><span class="o">=</span><span class="mi">23</span>
+</span><span class='line'>    <span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">pkoko</span>
+</span><span class='line'>      <span class="vc">@@koko</span>
+</span><span class='line'>    <span class="k">end</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="vc">@@koko</span><span class="o">=</span><span class="mi">99</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="nb">p</span> <span class="no">Myclass</span><span class="o">.</span><span class="n">pkoko</span> <span class="c1">#99</span>
+</span><span class='line'>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>同名类变量在类外面是可以一下改变的，比如：在所有类外面@@koko=100,那么所有类族中的同
+名类变量@@koko都会改变。</p>
+
+<p>4）类的实例对象，是类作为对象，所产生的实例对象。深刻理解一切都是对象这句话,就需要把
+类当作一个普通对象去看待。类的实例对象是用来记录只属于该类的一些属性。比如想记录一下
+某个类被实例化了多少次，或者被哪些继承了。我们都可以创建一个类的实例对象来记录这些。
+这就是类的实例对象的用途。
+  在类定义中去声明类的实例变量，而这些类的实例变量只能在类方法中使用。即然类实例变量
+是针对某一个类的，那自然就不可能被子类使用，失去了被继承的价值和意义。因此如果要定义
+需要和子类共享的类全局数据，使用类变量；但是如果要定义仅供类本身使用的类全局数据可以
+使用类实例变量。</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'> <span class="k">class</span> <span class="nc">Myclass</span>
+</span><span class='line'>            <span class="vi">@age</span><span class="o">=</span><span class="mi">12</span> <span class="c1">#类实例变量</span>
+</span><span class='line'>      <span class="k">def</span> <span class="nf">say</span>
+</span><span class='line'>          <span class="nb">p</span> <span class="vi">@age</span> <span class="c1">#nil 错误，类的实例变量不能放在实例方法中,会被误认为是对象的实例变量</span>
+</span><span class='line'>      <span class="k">end</span>
+</span><span class='line'>      <span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">cry</span>
+</span><span class='line'>          <span class="nb">p</span> <span class="vi">@age</span> <span class="c1">#12 类的实例变量只能在类方法中使用</span>
+</span><span class='line'>      <span class="k">end</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'>  <span class="k">class</span> <span class="nc">Mysonclass</span> <span class="o">&lt;</span> <span class="no">Myclass</span>
+</span><span class='line'>     <span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">meet</span>
+</span><span class='line'>       <span class="nb">p</span> <span class="vi">@age</span> <span class="c1">#nil 错误，父类的类实例变量不能被继承的，会被误认为是当前类的类实例变量</span>
+</span><span class='line'>    <span class="k">end</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>定义类的实例变量还可以有几种方式：</p>
+
+<p>方式一：</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'> <span class="k">class</span> <span class="nc">Myclass</span>
+</span><span class='line'>     <span class="n">class</span><span class="o">&lt;&lt;</span><span class="nb">self</span>
+</span><span class='line'>      <span class="kp">attr_accessor</span> <span class="ss">:age</span> <span class="c1">#类的实例变量</span>
+</span><span class='line'>     <span class="k">end</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>  <span class="no">Myclass</span><span class="o">.</span><span class="n">age</span><span class="o">=</span><span class="mi">2</span>
+</span><span class='line'>  <span class="nb">p</span> <span class="no">Myclass</span><span class="o">.</span><span class="n">age</span> <span class="c1">#2</span>
+</span><span class='line'>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>方式二：</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'> <span class="no">Myclass</span><span class="o">.</span><span class="n">class_eval</span> <span class="k">do</span>
+</span><span class='line'>    <span class="kp">attr_accessor</span> <span class="ss">:age</span> <span class="c1">#类的实例变量</span>
+</span><span class='line'>    <span class="c1">#顺便说一句，要搞清楚现在是在一个类的环境中</span>
+</span><span class='line'>    <span class="nb">self</span> <span class="c1">#代表这个类</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>5）再思考一下对象实例变量，对象实例变量会保存对象中，而实例方法会保存在类中。</p>
+
+<p>它们只能在类的实例方法中被使用，也可以被继承。</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'> <span class="k">class</span> <span class="nc">Myclass</span>
+</span><span class='line'>     <span class="kp">attr_accessor</span> <span class="ss">:name</span>
+</span><span class='line'>     <span class="k">def</span> <span class="nf">initialize</span>
+</span><span class='line'>         <span class="vi">@name</span><span class="o">=</span><span class="s2">&quot;suzhen&quot;</span> <span class="c1">#对象实例变量</span>
+</span><span class='line'>     <span class="k">end</span>
+</span><span class='line'>     <span class="k">def</span> <span class="nf">say</span>
+</span><span class='line'>        <span class="nb">p</span> <span class="vi">@name</span> <span class="c1">#suzhen</span>
+</span><span class='line'>     <span class="k">end</span>
+</span><span class='line'>     <span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">cry</span>
+</span><span class='line'>        <span class="nb">p</span> <span class="vi">@name</span> <span class="c1">#nil 错误，对象实例变量不能放在类方法中，会被识认为是类的实例变量</span>
+</span><span class='line'>     <span class="k">end</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">class</span> <span class="nc">Mysonclass</span> <span class="o">&lt;</span> <span class="no">Myclass</span>
+</span><span class='line'>     <span class="k">def</span> <span class="nf">talk</span>
+</span><span class='line'>       <span class="nb">p</span> <span class="vi">@name</span> <span class="c1">#suzhen 父类的对象实例变量是可以被继承的</span>
+</span><span class='line'>     <span class="k">end</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>如果我们不在定义类的时候定义好这些实例变量，也可以在之后的编程过程中去创建这些实例变
+量。在对象里加的实例变量就是对象实例变量，在类里加的实例变量就是类的实例变量。</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'> <span class="no">Myclass</span><span class="o">.</span><span class="n">instance_variable_defined?</span><span class="p">(</span><span class="s2">&quot;@age&quot;</span><span class="p">)</span>   <span class="c1">#true</span>
+</span><span class='line'>  <span class="n">obj</span><span class="o">.</span><span class="n">instance_variable_defined?</span><span class="p">(</span><span class="s2">&quot;@name&quot;</span><span class="p">)</span>   <span class="c1">#true</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="no">Myclass</span><span class="o">.</span><span class="n">instance_variable_set</span><span class="p">(</span><span class="s2">&quot;@age&quot;</span><span class="p">,</span> <span class="mi">23</span><span class="p">)</span>
+</span><span class='line'>  <span class="no">Myclass</span><span class="o">.</span><span class="n">instance_variable_get</span><span class="p">(</span><span class="s2">&quot;@age&quot;</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="n">obj</span><span class="o">.</span><span class="n">instance_variable_set</span><span class="p">(</span><span class="s2">&quot;@name&quot;</span><span class="p">,</span> <span class="s2">&quot;even&quot;</span><span class="p">)</span>
+</span><span class='line'>  <span class="n">obj</span><span class="o">.</span><span class="n">instance_variable_get</span><span class="p">(</span><span class="s2">&quot;@name&quot;</span><span class="p">)</span>
+</span><span class='line'>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>其实Myclass.instance_eval也可以实现，但我不喜欢这种方式，会容易搞混。</p>
+
+<p>问题：
+类变量和类实例变量有什么区别？
+http://snippets.aktagon.com/snippets/299-class-variables-vs-class-instance-variables-in-ruby
+http://www.railstips.org/blog/archives/2006/11/18/class-and-instance-variables-in-ruby/</p>
+
+<p>6)宏
+attr_accessor,attr_reader,attr_writer都是创建实例变量(类实例变量,对象实例变量)</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">class</span> <span class="nc">Myclass</span>
+</span><span class='line'>  <span class="kp">attr_accessor</span> <span class="ss">:age</span>  <span class="c1">#创建对象实例变量                                                                                                                                      </span>
+</span><span class='line'><span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">obj</span> <span class="o">=</span> <span class="no">Myclass</span><span class="o">.</span><span class="n">new</span>
+</span><span class='line'><span class="n">obj</span><span class="o">.</span><span class="n">age</span><span class="o">=</span><span class="mi">1</span>
+</span><span class='line'><span class="nb">p</span> <span class="n">obj</span><span class="o">.</span><span class="n">age</span> <span class="c1">#1                                                                                                                                                                 </span>
+</span><span class='line'><span class="n">obj</span><span class="o">.</span><span class="n">instance_eval</span> <span class="p">{</span> <span class="n">class</span><span class="o">&lt;&lt;</span><span class="nb">self</span><span class="p">;</span> <span class="kp">attr_accessor</span> <span class="ss">:name</span><span class="p">;</span><span class="k">end</span> <span class="p">}</span>
+</span><span class='line'><span class="n">obj</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span><span class="mi">1</span>
+</span><span class='line'><span class="nb">p</span> <span class="n">obj</span><span class="o">.</span><span class="n">name</span> <span class="c1">#1</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">class</span> <span class="nc">Myclass</span>
+</span><span class='line'>  <span class="k">class</span> <span class="o">&lt;&lt;</span> <span class="nb">self</span>
+</span><span class='line'>    <span class="kp">attr_accessor</span> <span class="ss">:count</span>  <span class="c1">#创建类实例变量</span>
+</span><span class='line'> <span class="k">end</span>
+</span><span class='line'><span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'><span class="no">Myclass</span><span class="o">.</span><span class="n">count</span><span class="o">=</span><span class="mi">1</span>
+</span><span class='line'><span class="nb">p</span> <span class="no">Myclass</span><span class="o">.</span><span class="n">count</span>  <span class="c1">#1</span>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'><span class="no">Myclass</span><span class="o">.</span><span class="n">class_eval</span> <span class="p">{</span>  <span class="n">class</span><span class="o">&lt;&lt;</span><span class="nb">self</span><span class="p">;</span> <span class="kp">attr_accessor</span> <span class="ss">:sum</span><span class="p">;</span><span class="k">end</span> <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="no">Myclass</span><span class="o">.</span><span class="n">sum</span><span class="o">=</span><span class="mi">1</span>
+</span><span class='line'><span class="nb">p</span> <span class="no">Myclass</span><span class="o">.</span><span class="n">sum</span>  <span class="c1">#1</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2012/12/03/importfile/">Require/load/autoload的区别和用法</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-12-03T01:34:00+08:00" pubdate data-updated="true">Dec 3<span>rd</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>首先我们建两个目录，一个命名rubylib，目录下有一个lib.rb文件，另一个目录命名rubyconfig,目录下有一个cfg.rb文件。</p>
+
+<p>lib.rb</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'> <span class="nb">puts</span> <span class="s2">&quot;I&#39;m lib&quot;</span>
+</span><span class='line'>  
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>cfg.rb</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'> <span class="nb">puts</span> <span class="s2">&quot;I&#39;m config&quot;</span>
+</span><span class='line'>  
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>再建立一个testrequire.rb文件</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'> <span class="nb">require</span> <span class="s2">&quot;./rubylib/lib&quot;</span>
+</span><span class='line'>  <span class="nb">puts</span> <span class="s2">&quot;hello,world&quot;</span>
+</span><span class='line'>  <span class="nb">require</span> <span class="s2">&quot;./rubylib/lib&quot;</span> <span class="c1">#遇到相同的文件，不再加载</span>
+</span><span class='line'>  
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>输出结果</p>
+
+<pre><code>I'm lib
+hello,world
+</code></pre>
+
+<p>再建立一个testload.rb文件</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'> <span class="nb">load</span> <span class="s2">&quot;./rubyconfig/cfg.rb&quot;</span>
+</span><span class='line'>  <span class="nb">puts</span> <span class="s2">&quot;hello,world&quot;</span>
+</span><span class='line'>  <span class="nb">load</span> <span class="s2">&quot;./rubyconfig/cfg.rb&quot;</span> <span class="c1">#无论是否加载过，都会加载</span>
+</span><span class='line'>  
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>输出结果</p>
+
+<pre><code>I'm config
+hello,world
+I'm config
+</code></pre>
+
+<p>说明：require和load同样都是用来加载文件。require的加载路径可以不写.rb,但是load就一定要写全文件名。require是只加载一次，如果有相同的文件，已经加载，则不再重复加载，用于加载库文件;而load是每次都会加载，无论是否已经加载过，常用于加载配置文件。
+<strong>require和load都表现为立即加载文件。而autoload则是使用到某个类时，才会去加载必要的文件。</strong></p>
+
+<p>建立一个mylib.rb的文件</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'> <span class="nb">puts</span> <span class="s2">&quot;I was loaded!&quot;</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">class</span> <span class="nc">MyLibrary</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'>  
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>使用require加载会立即加载</p>
+
+<pre><code>irb(main):001:0&gt; require 'mylibrary'
+I was loaded!
+=&gt; true
+</code></pre>
+
+<p>使用autoload只会在这个类被需要的时候，才去加载</p>
+
+<pre><code>irb(main):001:0&gt; autoload :MyLibrary, 'mylibrary'
+=&gt; nil
+irb(main):002:0&gt; MyLibrary.new
+I was loaded!
+=&gt; #&lt;MyLibrary:0x0b1jef&gt;
+</code></pre>
+
+<p>autoload不会被重复加载!</p>
+
+<p>如果有一些类或者模块一定会被用上，则使用require，如果不一定会被使用，才使用autoload。</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2012/12/03/octopressxue-xi-bi-ji/">Octopress学习笔记</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-12-03T01:14:00+08:00" pubdate data-updated="true">Dec 3<span>rd</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>octopress学习笔记(一)</p>
+
+<p>一些常用的命令和知识点</p>
+
+<p>克隆octopress.git到本地</p>
+
+<pre><code>git clone git://github.com/imathis/octopress.git octopress
+</code></pre>
+
+<p>进入octopress项目</p>
+
+<pre><code>cd octopress
+</code></pre>
+
+<p>此时需要我们来确定是否将ruby的版本切换到rvm中的1.9.3，输入&#8221;y&#8221;,确定。</p>
+
+<pre><code>bundler install
+</code></pre>
+
+<p>octopress的大部分操作都是会通过本身的rake任务来完成的。
+可以通过查看Rakefile里的内容来查看，可以通过rake list来查看一些rake命令。</p>
+
+<p>octopress会把blog的主题放在一个.themes的目录下。
+我们的第一步就是要加载这个主题</p>
+
+<pre><code>rake install 
+</code></pre>
+
+<p>默认加载的主题是classic,加载的过程是把.themes的内容分别拷贝到./source和./sass两个目
+录里。sass里放的这个theme是css,而source里放的是theme的html文件和脚本、图片等。</p>
+
+<p>此时我们就可以预览一下这个新blog了。</p>
+
+<pre><code>rake preview 
+</code></pre>
+
+<p>这个命令会在目录下出现在一个public的子目录，里面就是程序生成的静态页面。
+在浏览器里输入0.0.0.0:4000，就可以看到样子了。是不是很简单。</p>
+
+<p>但是页面里显示得都是些原始的信息，需要我们去设置成自己的信息。就在目录下有一个
+_config.yml中可以配置。这个文件里有三部分，一是基本配置，配置
+url,title,subtitle,author等，二是配置Jekyll,这部分是设置一些静态文件的目录，路由规则
+等。第三部分是一些第三方的功能的设置，比如twitter,googleplus,disqus等。配置好了这些
+，再重新rake preview 一下就可以看到包含自己信息的blog了。</p>
+
+<p>我们开始写博客，也是用rake来创建。</p>
+
+<pre><code>rake new_post[博客标题]
+</code></pre>
+
+<p>这时候会在source目录下的_post目录下产生一个年月日和文章名称组成的<strong><strong>-</strong>-</strong>-
+**.markdown文件，我们编辑这个文件就行了。如果想删除这篇博客文章，通过删除这个文件就
+可以了。</p>
+
+<p>编辑好了文章，就需要将文章转化成相应的静态文件，放在public目录下了，这样才能访问到。</p>
+
+<pre><code>rake generate
+</code></pre>
+
+<p>我们刷新一下0.0.0.0:4000就可以看到新文章了。</p>
+
+<p>最后是我们要将博客发布到github上。就需要设置一下github的地址。</p>
+
+<pre><code>rake setup_github_pages
+</code></pre>
+
+<p>此时，输入***.github.com之后，会在目录下创建一个<em>deploy的目录，并且初始化为一个git仓
+库。
+当我们已经把markdown转化为public目录下的静态文件后，就可以通过deploy命令把public下的
+内容放到</em>deploy目录下，加入版本库，并上传到关联的github的master分支上。</p>
+
+<pre><code>rake deploy
+</code></pre>
+
+<p>一个命令所有事搞定。</p>
+
+<p>我们对博客的修改其实是对source和sass的修改，那么修改后的内容也应该用git管理起来，只
+需要</p>
+
+<pre><code>git add .
+git commit -m "修改内容"
+</code></pre>
+
+<p>就可以进行博客的管理。在.gitignore中系统已经自动的把_deploy和public这目录排除了。当
+然这个也是需要推送到github上source分支的。</p>
+
+<pre><code>git push origin source
+</code></pre>
+
+<p>如果我们需要在另一台机器上也可以写博客，那么就需要把***.github.com仓库克隆到本地。</p>
+
+<pre><code>    git clone git@github.com:suzhen/suzhen.github.com.git octopress
+</code></pre>
+
+<p>查看一下分支</p>
+
+<pre><code>    git branch
+</code></pre>
+
+<p>会发现有master和source两个分支，通过git checkout source 切换到代码分支就可以开发博客
+了。但是我们会发现<em>deploy这个文件并不存在。rake deploy命令并不能执行。所以我们还需要
+将deploy从github上克隆下来。在octopress目录里再git clone
+git@github.com:suzhen/suzhen.github.com.git </em>deploy 就可以了。这样我们就可以继续使用
+rake deploy命令了。</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2012/12/02/ce-shi-%5B%3F%5D-wen/">测试一文</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-12-02T18:40:00+08:00" pubdate data-updated="true">Dec 2<span>nd</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>我想可以试一下这个怎么写。</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'> <span class="k">class</span> <span class="nc">Myclass</span>
+</span><span class='line'>    <span class="k">def</span> <span class="nf">play</span>
+</span><span class='line'>      <span class="vi">@game</span><span class="o">=||</span><span class="s2">&quot;ball&quot;</span>
+</span><span class='line'>    <span class="k">end</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'>  
+</span></code></pre></td></tr></table></div></figure>
+
+
+<pre><code>    ``` ruby
+    module Mymodule
+      def play
+        @game=||"ball"
+      end
+    end
+    ```
+</code></pre>
+</div>
+  
+  
+
+
+    </article>
+  
+  <div class="pagination">
+    
+    <a href="/blog/archives">Blog Archives</a>
+    
+    <a class="next" href="/">Newer &rarr;</a>
+    
+  </div>
+</div>
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2014/02/23/rubymo-fa-shi-%28fang-fa-gao-ji-pian-%29/">RUBY魔法师（方法高级篇）</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/02/23/rubyzhi-lei-dui-xiang/">Ruby之类对象</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/02/23/rubymo-fa-shi-fang-wen-kong-zhi/">Ruby魔法师(访问控制)</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/02/23/rubymo-fa-shi-chu-shi-hua-dui-xiang/">RUBY魔法师(初始化对象)</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/02/23/rubyji-cheng-initializeshi-de-shun-xu/">RUBY继承initialize时的顺序</a>
+      </li>
+    
+  </ul>
+</section>
+
+
+
+
+
+
+  
+</aside>
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2014 - suzhen -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>
