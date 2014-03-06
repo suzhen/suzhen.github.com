@@ -9,10 +9,17 @@
   <meta name="author" content="suzhen">
 
   
-  <meta name="description" content="1) 在程序中经常看见“__FILE__”（注意是左边两个下划线，右边两下划线）,这代
-表“__FILE__”所在文件的文件名。如果“__FILE__”是在require或者load的文件中，则是代
-表被包含文件的绝对路径和文件名。 a.rb文件: 1
-2 p __FILE__ b.rb文件 1 &hellip;">
+  <meta name="description" content="defind?是一个和and、not一样的操作符。用来判断表达式是否存在，及是哪种类型的表达式。 1
+2
+3
+4
+5
+6
+7
+8
+defined? yuchen #=&gt; nil
+defined? true #=&gt; “true”
+defined? $* #=&gt; &quot; &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -67,6 +74,179 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2013/08/31/guan-yu-defined-cao-zuo-fu/">关于defined?操作符</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-08-31T17:55:00+08:00" pubdate data-updated="true">Aug 31<span>st</span>, 2013</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>defind?是一个和and、not一样的操作符。用来判断表达式是否存在，及是哪种类型的表达式。</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">defined?</span> <span class="n">yuchen</span>         <span class="c1">#=&gt; nil</span>
+</span><span class='line'><span class="n">defined?</span> <span class="kp">true</span>         <span class="c1">#=&gt; “true”</span>
+</span><span class='line'><span class="n">defined?</span> <span class="vg">$*</span>           <span class="c1">#=&gt; &quot;global-variable&quot;</span>
+</span><span class='line'><span class="n">defined?</span> <span class="nb">Array</span>        <span class="c1">#=&gt; &quot;constant&quot;</span>
+</span><span class='line'><span class="n">defined?</span> <span class="no">Math</span><span class="o">::</span><span class="no">PI</span> <span class="c1">#=&gt; &quot;constant&quot;</span>
+</span><span class='line'><span class="n">defined?</span> <span class="n">num</span> <span class="o">=</span> <span class="mi">0</span>     <span class="c1">#=&gt; &quot;assignment&quot;</span>
+</span><span class='line'><span class="n">defined?</span> <span class="mi">100</span>         <span class="c1">#=&gt; &quot;expression&quot;</span>
+</span><span class='line'><span class="n">defined?</span> <span class="mi">100</span><span class="o">.</span><span class="n">times</span>   <span class="c1">#=&gt; &quot;method&quot;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>除此之外还有一些用法：</p>
+
+<p>1、可以来判断是否有block,作用同block_given?</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'>    <span class="k">class</span> <span class="nc">Base</span>
+</span><span class='line'>        <span class="k">def</span> <span class="nf">foo</span>
+</span><span class='line'>           <span class="nb">puts</span> <span class="n">defined?</span> <span class="k">yield</span>
+</span><span class='line'>        <span class="k">end</span>
+</span><span class='line'>    <span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">a</span> <span class="o">=</span> <span class="no">Base</span><span class="o">.</span><span class="n">new</span>
+</span><span class='line'><span class="n">a</span><span class="o">.</span><span class="n">foo</span>
+</span><span class='line'><span class="n">a</span><span class="o">.</span><span class="n">foo</span> <span class="p">{}</span>
+</span><span class='line'>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>执行结果为：</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'> <span class="kp">nil</span>
+</span><span class='line'> <span class="k">yield</span> <span class="c1">#如果有block输出&quot;yield&quot;</span>
+</span><span class='line'>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>2、可以来判断方法里是否有super方法</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">class</span> <span class="nc">Base</span>
+</span><span class='line'>        <span class="k">def</span> <span class="nf">foo</span>
+</span><span class='line'>        <span class="k">end</span>
+</span><span class='line'><span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">class</span> <span class="nc">Derived</span> <span class="o">&lt;</span> <span class="no">Base</span>
+</span><span class='line'>        <span class="k">def</span> <span class="nf">foo</span>
+</span><span class='line'>           <span class="nb">puts</span> <span class="n">defined?</span> <span class="k">super</span>
+</span><span class='line'>        <span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="k">def</span> <span class="nf">fun</span>
+</span><span class='line'>           <span class="nb">puts</span> <span class="n">defined?</span> <span class="k">super</span>
+</span><span class='line'>        <span class="k">end</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">obj</span> <span class="o">=</span> <span class="no">Derived</span><span class="o">.</span><span class="n">new</span>
+</span><span class='line'><span class="n">obj</span><span class="o">.</span><span class="n">foo</span>
+</span><span class='line'><span class="n">obj</span><span class="o">.</span><span class="n">fun</span>
+</span><span class='line'>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>执行结果为：</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'> <span class="k">super</span>
+</span><span class='line'> <span class="kp">nil</span>
+</span><span class='line'>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>注意一点。如果defined?的参数是一段语句，那是不能被执行的。</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="nb">p</span> <span class="n">defined?</span><span class="p">(</span><span class="k">def</span> <span class="nf">x</span><span class="p">;</span> <span class="k">end</span><span class="p">)</span>   <span class="c1"># &quot;expression&quot;</span>
+</span><span class='line'><span class="n">x</span>                        <span class="c1"># error: undefined method or variable</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="nb">p</span> <span class="n">defined?</span><span class="p">(</span><span class="vi">@x</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>         <span class="c1"># &quot;assignment&quot;</span>
+</span><span class='line'><span class="nb">p</span> <span class="vi">@x</span>                     <span class="c1"># nil</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -1396,6 +1576,10 @@ rake deploy命令了。</p>
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2014/03/06/javascriptgao-jie-zhi-arguments/">Javascript高阶之arguments</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2014/03/06/activemodelyu-activerecrodde-xuan-ze/">ActiveModel与ActiveRecrod的选择</a>
       </li>
     
@@ -1409,10 +1593,6 @@ rake deploy命令了。</p>
     
       <li class="post">
         <a href="/blog/2014/02/23/rubymo-fa-shi-fang-wen-kong-zhi/">Ruby魔法师(访问控制)</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2014/02/23/rubymo-fa-shi-chu-shi-hua-dui-xiang/">RUBY魔法师(初始化对象)</a>
       </li>
     
   </ul>

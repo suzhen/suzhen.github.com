@@ -9,7 +9,7 @@
   <meta name="author" content="suzhen">
 
   
-  <meta name="description" content="如果我们有一个类，继承了ActiveRecord::Base，那么意味着这是一个用来做model的类。它具有了把数据存入数据库的能力。除此之外还拥有了关于验证（Validations）的类方法，关于转化（Conversion）的实例方法，关于命名（Naming）的类方法等等。 但其实， &hellip;">
+  <meta name="description" content="arguments对象是所有function中可用的局部变量，它像是一个array,但并不是一个array（这一点下面会详细说明）。 在一个function内部，可以通过使用arguments对象来访问当前function的参数。这个类似于数组的对象包含了每个传入function的参数。 &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -64,6 +64,170 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2014/03/06/javascriptgao-jie-zhi-arguments/">Javascript高阶之arguments</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-03-06T15:53:00+08:00" pubdate data-updated="true">Mar 6<span>th</span>, 2014</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>arguments对象是所有function中可用的局部变量，它像是一个array,但并不是一个array（这一点下面会详细说明）。</p>
+
+<p>在一个function内部，可以通过使用arguments对象来访问当前function的参数。这个类似于数组的对象包含了每个传入function的参数。index也是从0开始的。如果一个function被传入了三个参数，可以这么访问它们：</p>
+
+<p>arguments[0]
+arguments[1]
+arguments[2]</p>
+
+<p>当然这些参数也能被生置：</p>
+
+<p>arguments[1] = &#8220;new value&#8221;</p>
+
+<p>现在说说这个类似于array，但又不是array的arguments对象。它除了能像array一样通过index访问，还有一个length的属性，再没有像array的那些方法和属性了,比如pop方法或者push方法了。</p>
+
+<p>但是我们又常常需要arguments对象具有array的这些方法，怎么办？其实它能被转化成一个真的array.</p>
+
+<p>var args = Array.prototype.slice.call(arguments);</p>
+
+<p>//问题：为什么是Array.prototype.slice，而不是Array.slice？
+//回复：一个是实例方法，一个是类方法。</p>
+
+<p>这样arguments就全部转化为了args数组，就可以对这个array实例用各种实例方法。</p>
+
+<p>比如：我们传入的参数，前面n个是参数，而最后一个是callback函数。</p>
+
+<p>如果获取这最后一个function的参数呢？</p>
+
+<p>fn_callback = args.pop()</p>
+
+<p>这样就可以获取到callback函数。</p>
+
+<p>另外一种方法：</p>
+
+<p>  var args = []</p>
+
+<p>  args = Array.apply(args,arguments)</p>
+
+<p> Array是一个类，那么Array也就是一个类的构造函数。</p>
+
+<p>在call中，arguments是做为this，而在apply中，arguments是做为参数。关于apply和call在以后会有详细说明。</p>
+
+<p>如果我们需要调用一个function时，并不确定要传入多少参数。那么在定义这个function的时候，就没必要再写任何形参了。</p>
+
+<p>function f1(){</p>
+
+<p>}</p>
+
+<p>f1(&#8220;cat&#8221;,&#8221;dog&#8221;,&#8221;cow&#8221;,&#8221;snake&#8221;)</p>
+
+<p>或者我们只需要一个参数，但传入了多个参数。</p>
+
+<p>function f1(animal){</p>
+
+<p>}
+f1(&#8220;cat&#8221;,&#8221;dog&#8221;,&#8221;cow&#8221;,&#8221;snake&#8221;)</p>
+
+<p>这时候，用arguments对象就非常有用了。</p>
+
+<p>可以用arguments.length来判断传入参数的个数。也可以用arguments处理每个参数。</p>
+
+<p>有一个小技巧可以利用：</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'>
+</span><span class='line'>
+</span><span class='line'><span class="kd">function</span> <span class="nx">myConcat</span><span class="p">(</span><span class="nx">separator</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>  <span class="kd">var</span> <span class="nx">args</span> <span class="o">=</span> <span class="nb">Array</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">slice</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">arguments</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
+</span><span class='line'>  <span class="k">return</span> <span class="nx">args</span><span class="p">.</span><span class="nx">join</span><span class="p">(</span><span class="nx">separator</span><span class="p">);</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'><span class="nx">You</span> <span class="nx">can</span> <span class="nx">pass</span> <span class="nx">any</span> <span class="nx">number</span> <span class="nx">of</span> <span class="nx">arguments</span> <span class="nx">to</span> <span class="k">this</span> <span class="kd">function</span><span class="p">,</span> <span class="nx">and</span> <span class="nx">it</span> <span class="nx">creates</span> <span class="nx">a</span> <span class="nx">list</span> <span class="nx">using</span> <span class="nx">each</span> <span class="nx">argument</span> <span class="nx">as</span> <span class="nx">an</span> <span class="nx">item</span> <span class="k">in</span> <span class="nx">the</span> <span class="nx">list</span><span class="p">.</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">// returns &quot;red, orange, blue&quot;</span>
+</span><span class='line'><span class="nx">myConcat</span><span class="p">(</span><span class="s2">&quot;, &quot;</span><span class="p">,</span> <span class="s2">&quot;red&quot;</span><span class="p">,</span> <span class="s2">&quot;orange&quot;</span><span class="p">,</span> <span class="s2">&quot;blue&quot;</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">// returns &quot;elephant; giraffe; lion; cheetah&quot;</span>
+</span><span class='line'><span class="nx">myConcat</span><span class="p">(</span><span class="s2">&quot;; &quot;</span><span class="p">,</span> <span class="s2">&quot;elephant&quot;</span><span class="p">,</span> <span class="s2">&quot;giraffe&quot;</span><span class="p">,</span> <span class="s2">&quot;lion&quot;</span><span class="p">,</span> <span class="s2">&quot;cheetah&quot;</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">// returns &quot;sage. basil. oregano. pepper. parsley&quot;</span>
+</span><span class='line'><span class="nx">myConcat</span><span class="p">(</span><span class="s2">&quot;. &quot;</span><span class="p">,</span> <span class="s2">&quot;sage&quot;</span><span class="p">,</span> <span class="s2">&quot;basil&quot;</span><span class="p">,</span> <span class="s2">&quot;oregano&quot;</span><span class="p">,</span> <span class="s2">&quot;pepper&quot;</span><span class="p">,</span> <span class="s2">&quot;parsley&quot;</span><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>myConcat只有一个参数，这个参数是用来传入连接之后每一个参数的字符的。这种参数就需要特定的形参来固定下来，如果只是枚举的参数，就不需要形参，在调用的时候，直接转入去就可以了。通过arguments对象可以获取到。</p>
+
+<p>arguments对象除了length属性，还有一个callee属性</p>
+
+<p>arguments.callee 获取当前执行的function，递归的时候会有用。但会有一个疑问，用方法名不就可以吗? 但是有匿名方法的时候，这个有用了。而且，如果function内部重复用方法名，要是想改方法名就需要改多个地方。容易出错。</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'>
+</span><span class='line'>
+</span><span class='line'><span class="kd">function</span> <span class="nx">create</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>   <span class="k">return</span> <span class="kd">function</span><span class="p">(</span><span class="nx">n</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>      <span class="k">if</span> <span class="p">(</span><span class="nx">n</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">)</span>
+</span><span class='line'>         <span class="k">return</span> <span class="mi">1</span><span class="p">;</span>
+</span><span class='line'>      <span class="k">return</span> <span class="nx">n</span> <span class="o">*</span> <span class="nx">arguments</span><span class="p">.</span><span class="nx">callee</span><span class="p">(</span><span class="nx">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">);</span>
+</span><span class='line'>   <span class="p">};</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="kd">var</span> <span class="nx">result</span> <span class="o">=</span> <span class="nx">create</span><span class="p">()(</span><span class="mi">5</span><span class="p">);</span> <span class="c1">// returns 120 (5 * 4 * 3 * 2 * 1)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -3024,179 +3188,6 @@ gem "carrierwave-mongoid", git: "git://github.com/jnicklas/carrierwave-mongoid.g
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2013/08/31/guan-yu-defined-cao-zuo-fu/">关于defined?操作符</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2013-08-31T17:55:00+08:00" pubdate data-updated="true">Aug 31<span>st</span>, 2013</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>defind?是一个和and、not一样的操作符。用来判断表达式是否存在，及是哪种类型的表达式。</p>
-
-<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">defined?</span> <span class="n">yuchen</span>         <span class="c1">#=&gt; nil</span>
-</span><span class='line'><span class="n">defined?</span> <span class="kp">true</span>         <span class="c1">#=&gt; “true”</span>
-</span><span class='line'><span class="n">defined?</span> <span class="vg">$*</span>           <span class="c1">#=&gt; &quot;global-variable&quot;</span>
-</span><span class='line'><span class="n">defined?</span> <span class="nb">Array</span>        <span class="c1">#=&gt; &quot;constant&quot;</span>
-</span><span class='line'><span class="n">defined?</span> <span class="no">Math</span><span class="o">::</span><span class="no">PI</span> <span class="c1">#=&gt; &quot;constant&quot;</span>
-</span><span class='line'><span class="n">defined?</span> <span class="n">num</span> <span class="o">=</span> <span class="mi">0</span>     <span class="c1">#=&gt; &quot;assignment&quot;</span>
-</span><span class='line'><span class="n">defined?</span> <span class="mi">100</span>         <span class="c1">#=&gt; &quot;expression&quot;</span>
-</span><span class='line'><span class="n">defined?</span> <span class="mi">100</span><span class="o">.</span><span class="n">times</span>   <span class="c1">#=&gt; &quot;method&quot;</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>除此之外还有一些用法：</p>
-
-<p>1、可以来判断是否有block,作用同block_given?</p>
-
-<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'>    <span class="k">class</span> <span class="nc">Base</span>
-</span><span class='line'>        <span class="k">def</span> <span class="nf">foo</span>
-</span><span class='line'>           <span class="nb">puts</span> <span class="n">defined?</span> <span class="k">yield</span>
-</span><span class='line'>        <span class="k">end</span>
-</span><span class='line'>    <span class="k">end</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-
-
-<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">a</span> <span class="o">=</span> <span class="no">Base</span><span class="o">.</span><span class="n">new</span>
-</span><span class='line'><span class="n">a</span><span class="o">.</span><span class="n">foo</span>
-</span><span class='line'><span class="n">a</span><span class="o">.</span><span class="n">foo</span> <span class="p">{}</span>
-</span><span class='line'>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>执行结果为：</p>
-
-<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'> <span class="kp">nil</span>
-</span><span class='line'> <span class="k">yield</span> <span class="c1">#如果有block输出&quot;yield&quot;</span>
-</span><span class='line'>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>2、可以来判断方法里是否有super方法</p>
-
-<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">class</span> <span class="nc">Base</span>
-</span><span class='line'>        <span class="k">def</span> <span class="nf">foo</span>
-</span><span class='line'>        <span class="k">end</span>
-</span><span class='line'><span class="k">end</span>
-</span><span class='line'>
-</span><span class='line'><span class="k">class</span> <span class="nc">Derived</span> <span class="o">&lt;</span> <span class="no">Base</span>
-</span><span class='line'>        <span class="k">def</span> <span class="nf">foo</span>
-</span><span class='line'>           <span class="nb">puts</span> <span class="n">defined?</span> <span class="k">super</span>
-</span><span class='line'>        <span class="k">end</span>
-</span><span class='line'>
-</span><span class='line'>        <span class="k">def</span> <span class="nf">fun</span>
-</span><span class='line'>           <span class="nb">puts</span> <span class="n">defined?</span> <span class="k">super</span>
-</span><span class='line'>        <span class="k">end</span>
-</span><span class='line'><span class="k">end</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-
-
-<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">obj</span> <span class="o">=</span> <span class="no">Derived</span><span class="o">.</span><span class="n">new</span>
-</span><span class='line'><span class="n">obj</span><span class="o">.</span><span class="n">foo</span>
-</span><span class='line'><span class="n">obj</span><span class="o">.</span><span class="n">fun</span>
-</span><span class='line'>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>执行结果为：</p>
-
-<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'> <span class="k">super</span>
-</span><span class='line'> <span class="kp">nil</span>
-</span><span class='line'>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>注意一点。如果defined?的参数是一段语句，那是不能被执行的。</p>
-
-<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="nb">p</span> <span class="n">defined?</span><span class="p">(</span><span class="k">def</span> <span class="nf">x</span><span class="p">;</span> <span class="k">end</span><span class="p">)</span>   <span class="c1"># &quot;expression&quot;</span>
-</span><span class='line'><span class="n">x</span>                        <span class="c1"># error: undefined method or variable</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-
-
-<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="nb">p</span> <span class="n">defined?</span><span class="p">(</span><span class="vi">@x</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>         <span class="c1"># &quot;assignment&quot;</span>
-</span><span class='line'><span class="nb">p</span> <span class="vi">@x</span>                     <span class="c1"># nil</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/blog/page/2/">&larr; Older</a>
@@ -3212,6 +3203,10 @@ gem "carrierwave-mongoid", git: "git://github.com/jnicklas/carrierwave-mongoid.g
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2014/03/06/javascriptgao-jie-zhi-arguments/">Javascript高阶之arguments</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2014/03/06/activemodelyu-activerecrodde-xuan-ze/">ActiveModel与ActiveRecrod的选择</a>
       </li>
     
@@ -3225,10 +3220,6 @@ gem "carrierwave-mongoid", git: "git://github.com/jnicklas/carrierwave-mongoid.g
     
       <li class="post">
         <a href="/blog/2014/02/23/rubymo-fa-shi-fang-wen-kong-zhi/">Ruby魔法师(访问控制)</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2014/02/23/rubymo-fa-shi-chu-shi-hua-dui-xiang/">RUBY魔法师(初始化对象)</a>
       </li>
     
   </ul>
