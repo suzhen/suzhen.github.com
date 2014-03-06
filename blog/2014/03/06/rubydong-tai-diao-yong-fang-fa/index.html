@@ -5,13 +5,24 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>require/load/autoload的区别和用法 - 雨辰不语</title>
+  <title>RUBY动态调用方法 - 雨辰不语</title>
   <meta name="author" content="suzhen">
 
   
-  <meta name="description" content="首先我们建两个目录，一个命名rubylib，目录下有一个lib.rb文件，另一个目录命名rubyconfig,目录下有一个cfg.rb文件。 lib.rb 1
-2 puts &quot;I&#39;m lib&quot; cfg.rb 1
-2 puts &quot;I&#39;m config& &hellip;">
+  <meta name="description" content="有三种方式： 1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14 class Dummy attr_accessor :host def initialize(name) @host = name end def say(content) puts &quot;Hi,#{host &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -20,7 +31,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://suzhen.github.com/blog/2012/12/03/importfile/">
+  <link rel="canonical" href="http://suzhen.github.com/blog/2014/03/06/rubydong-tai-diao-yong-fang-fa/">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <script src="/javascripts/modernizr-2.0.js"></script>
@@ -69,7 +80,7 @@
   
   <header>
     
-      <h1 class="entry-title">Require/load/autoload的区别和用法</h1>
+      <h1 class="entry-title">RUBY动态调用方法</h1>
     
     
       <p class="meta">
@@ -85,109 +96,80 @@
   
 
 
-<time datetime="2012-12-03T01:34:00+08:00" pubdate data-updated="true">Dec 3<span>rd</span>, 2012</time>
+<time datetime="2014-03-06T16:03:00+08:00" pubdate data-updated="true">Mar 6<span>th</span>, 2014</time>
         
       </p>
     
   </header>
 
 
-<div class="entry-content"><p>首先我们建两个目录，一个命名rubylib，目录下有一个lib.rb文件，另一个目录命名rubyconfig,目录下有一个cfg.rb文件。</p>
-
-<p>lib.rb</p>
-
-<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'> <span class="nb">puts</span> <span class="s2">&quot;I&#39;m lib&quot;</span>
-</span><span class='line'>  
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>cfg.rb</p>
-
-<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'> <span class="nb">puts</span> <span class="s2">&quot;I&#39;m config&quot;</span>
-</span><span class='line'>  
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>再建立一个testrequire.rb文件</p>
-
-<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'> <span class="nb">require</span> <span class="s2">&quot;./rubylib/lib&quot;</span>
-</span><span class='line'>  <span class="nb">puts</span> <span class="s2">&quot;hello,world&quot;</span>
-</span><span class='line'>  <span class="nb">require</span> <span class="s2">&quot;./rubylib/lib&quot;</span> <span class="c1">#遇到相同的文件，不再加载</span>
-</span><span class='line'>  
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>输出结果</p>
-
-<pre><code>I'm lib
-hello,world
-</code></pre>
-
-<p>再建立一个testload.rb文件</p>
-
-<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'> <span class="nb">load</span> <span class="s2">&quot;./rubyconfig/cfg.rb&quot;</span>
-</span><span class='line'>  <span class="nb">puts</span> <span class="s2">&quot;hello,world&quot;</span>
-</span><span class='line'>  <span class="nb">load</span> <span class="s2">&quot;./rubyconfig/cfg.rb&quot;</span> <span class="c1">#无论是否加载过，都会加载</span>
-</span><span class='line'>  
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>输出结果</p>
-
-<pre><code>I'm config
-hello,world
-I'm config
-</code></pre>
-
-<p>说明：require和load同样都是用来加载文件。require的加载路径可以不写.rb,但是load就一定要写全文件名。require是只加载一次，如果有相同的文件，已经加载，则不再重复加载，用于加载库文件;而load是每次都会加载，无论是否已经加载过，常用于加载配置文件。
-<strong>require和load都表现为立即加载文件。而autoload则是使用到某个类时，才会去加载必要的文件。</strong></p>
-
-<p>建立一个mylib.rb的文件</p>
+<div class="entry-content"><p>有三种方式：</p>
 
 <figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
 <span class='line-number'>4</span>
 <span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'> <span class="nb">puts</span> <span class="s2">&quot;I was loaded!&quot;</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'>
+</span><span class='line'>  <span class="k">class</span> <span class="nc">Dummy</span>
+</span><span class='line'>    <span class="kp">attr_accessor</span> <span class="ss">:host</span>
 </span><span class='line'>
-</span><span class='line'>  <span class="k">class</span> <span class="nc">MyLibrary</span>
+</span><span class='line'>    <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="nb">name</span><span class="p">)</span>
+</span><span class='line'>      <span class="vi">@host</span> <span class="o">=</span> <span class="nb">name</span>
+</span><span class='line'>    <span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">def</span> <span class="nf">say</span><span class="p">(</span><span class="n">content</span><span class="p">)</span>
+</span><span class='line'>      <span class="nb">puts</span> <span class="s2">&quot;Hi,</span><span class="si">#{</span><span class="n">host</span><span class="si">}</span><span class="s2">,</span><span class="si">#{</span><span class="n">content</span><span class="si">}</span><span class="s2">&quot;</span>
+</span><span class='line'>    <span class="k">end</span>
+</span><span class='line'>
 </span><span class='line'>  <span class="k">end</span>
-</span><span class='line'>  
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>使用require加载会立即加载</p>
+<p>  第一种用send动态调用</p>
 
-<pre><code>irb(main):001:0&gt; require 'mylibrary'
-I was loaded!
-=&gt; true
-</code></pre>
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'>
+</span><span class='line'>  <span class="no">Dummy</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s2">&quot;suzhen&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="ss">:say</span><span class="p">,</span><span class="s2">&quot;how are you&quot;</span><span class="p">)</span>
+</span><span class='line'>
+</span></code></pre></td></tr></table></div></figure>
 
-<p>使用autoload只会在这个类被需要的时候，才去加载</p>
 
-<pre><code>irb(main):001:0&gt; autoload :MyLibrary, 'mylibrary'
-=&gt; nil
-irb(main):002:0&gt; MyLibrary.new
-I was loaded!
-=&gt; #&lt;MyLibrary:0x0b1jef&gt;
-</code></pre>
+<p>  第二种用method来获取某个方法，用call来调用。也算是延迟调用。</p>
 
-<p>autoload不会被重复加载!</p>
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'>
+</span><span class='line'>  <span class="n">m</span> <span class="o">=</span> <span class="no">Dummy</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s2">&quot;suzhen&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">method</span><span class="p">(</span><span class="ss">:say</span><span class="p">)</span>
+</span><span class='line'>  <span class="n">m</span><span class="o">.</span><span class="n">call</span><span class="p">(</span><span class="s2">&quot;how are you&quot;</span><span class="p">)</span>
+</span><span class='line'>
+</span></code></pre></td></tr></table></div></figure>
 
-<p>如果有一些类或者模块一定会被用上，则使用require，如果不一定会被使用，才使用autoload。</p>
+
+<p>  第三种用eval来动态调用</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'>
+</span><span class='line'>  <span class="nb">eval</span> <span class="s2">&quot;Dummy.new(&#39;suzhen&#39;).say(&#39;how are you&#39;)&quot;</span>
+</span><span class='line'>
+</span></code></pre></td></tr></table></div></figure>
+
 </div>
 
 
@@ -210,7 +192,7 @@ I was loaded!
   
 
 
-<time datetime="2012-12-03T01:34:00+08:00" pubdate data-updated="true">Dec 3<span>rd</span>, 2012</time>
+<time datetime="2014-03-06T16:03:00+08:00" pubdate data-updated="true">Mar 6<span>th</span>, 2014</time>
       
 
 <span class="categories">
@@ -231,10 +213,10 @@ I was loaded!
     
     <p class="meta">
       
-        <a class="basic-alignment left" href="/blog/2012/12/03/octopressxue-xi-bi-ji/" title="Previous Post: octopress学习笔记">&laquo; octopress学习笔记</a>
+        <a class="basic-alignment left" href="/blog/2014/03/06/javascriptgao-jie-zhi-arguments/" title="Previous Post: Javascript高阶之arguments">&laquo; Javascript高阶之arguments</a>
       
       
-        <a class="basic-alignment right" href="/blog/2012/12/03/rubyvar/" title="Next Post: ruby中的变量">ruby中的变量 &raquo;</a>
+        <a class="basic-alignment right" href="/blog/2014/03/06/rubymo-fa-shi-tao-xin-pian/" title="Next Post: RUBY魔法师(掏心篇)">RUBY魔法师(掏心篇) &raquo;</a>
       
     </p>
   </footer>

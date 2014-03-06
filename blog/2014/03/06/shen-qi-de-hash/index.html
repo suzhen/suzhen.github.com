@@ -5,11 +5,11 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>Category: mongodb - 雨辰不语</title>
+  <title>神奇的HASH - 雨辰不语</title>
   <meta name="author" content="suzhen">
 
   
-  <meta name="description" content="Category: mongodb">
+  <meta name="description" content="hash是我们经常会用到一种数据结构。它有很多特别的有趣的特性是不被发现的。这片文章来总结一下： Hash.new 初始化一个HASH对象。 ah1 = {} #=> {} ah2 = Hash.new #=> {} 以上两种是最基本的初始化方法。 ah3 = Hash.new(&#8220; &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -18,7 +18,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://suzhen.github.comblog/categories/mongodb/">
+  <link rel="canonical" href="http://suzhen.github.com/blog/2014/03/06/shen-qi-de-hash/">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <script src="/javascripts/modernizr-2.0.js"></script>
@@ -63,35 +63,106 @@
   <div id="main">
     <div id="content">
       <div>
-<article role="article">
+<article class="hentry" role="article">
   
   <header>
-    <h1 class="entry-title">Category: Mongodb</h1>
+    
+      <h1 class="entry-title">神奇的HASH</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-03-06T16:09:00+08:00" pubdate data-updated="true">Mar 6<span>th</span>, 2014</time>
+        
+      </p>
     
   </header>
-  
-  <div id="blog-archives" class="category">
 
 
+<div class="entry-content"><p>hash是我们经常会用到一种数据结构。它有很多特别的有趣的特性是不被发现的。这片文章来总结一下：</p>
 
-  
-  <h2>2013</h2>
+<p>  Hash.new 初始化一个HASH对象。</p>
 
-<article>
-  
-<h1><a href="/blog/2013/08/31/gridfsxue-xi-he-shi-yong/">GridFS学习和使用</a></h1>
-<time datetime="2013-08-31T22:59:00+08:00" pubdate><span class='month'>Aug</span> <span class='day'>31</span> <span class='year'>2013</span></time>
+<p>  ah1 = {}     #=>  {}</p>
 
-<footer>
-  <span class="categories">posted in <a class='category' href='/blog/categories/mongodb/'>mongodb</a></span>
-</footer>
+<p>  ah2 = Hash.new  #=> {}</p>
 
+<p>  以上两种是最基本的初始化方法。</p>
 
-</article>
+<p>  ah3 = Hash.new(&#8220;hello&#8221;)   #=>{}</p>
 
+<p>  ah4 = Hash.new {|hash,key| hash[key] = &#8220;hello,#{key}&#8221;} #=>{}</p>
+
+<p>  以上两种初始化方法，是给hash对象没有value的key一个默认的value。</p>
+
+<p>  一： ah3[&#8220;age&#8221;] 我们并没有赋值，ah3也没有这个key</p>
+
+<p>  但我们输出 ah3[“age&#8221;] 时，会出现 hello  ，无论我们使用什么key,只要没有赋值，输出的都是hello</p>
+
+<p>  二：ah4就更神奇了，输出的默认value，是和我们的key有了关系。比如：</p>
+
+<p>  ah4[“suzhen”] => hello,suzhen</p>
+
+<p>  ah4[“suyuchen”] => hello,suyuchen</p>
 </div>
 
+
+  <footer>
+    <p class="meta">
+      
   
+
+<span class="byline author vcard">Posted by <span class="fn">suzhen</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-03-06T16:09:00+08:00" pubdate data-updated="true">Mar 6<span>th</span>, 2014</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/ruby/'>ruby</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2014/03/06/rubymo-fa-shi-tao-xin-pian/" title="Previous Post: RUBY魔法师(掏心篇)">&laquo; RUBY魔法师(掏心篇)</a>
+      
+      
+    </p>
+  </footer>
 </article>
 
 </div>

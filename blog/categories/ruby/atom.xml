@@ -4,7 +4,7 @@
   <title><![CDATA[Category: ruby | 雨辰不语]]></title>
   <link href="http://suzhen.github.com/blog/categories/ruby/atom.xml" rel="self"/>
   <link href="http://suzhen.github.com/"/>
-  <updated>2014-03-06T15:58:45+08:00</updated>
+  <updated>2014-03-06T16:10:03+08:00</updated>
   <id>http://suzhen.github.com/</id>
   <author>
     <name><![CDATA[suzhen]]></name>
@@ -14,80 +14,58 @@
 
   
   <entry>
-    <title type="html"><![CDATA[关于defined?操作符]]></title>
-    <link href="http://suzhen.github.com/blog/2013/08/31/guan-yu-defined-cao-zuo-fu/"/>
-    <updated>2013-08-31T17:55:00+08:00</updated>
-    <id>http://suzhen.github.com/blog/2013/08/31/guan-yu-defined-cao-zuo-fu</id>
-    <content type="html"><![CDATA[<p>defind?是一个和and、not一样的操作符。用来判断表达式是否存在，及是哪种类型的表达式。</p>
+    <title type="html"><![CDATA[神奇的HASH]]></title>
+    <link href="http://suzhen.github.com/blog/2014/03/06/shen-qi-de-hash/"/>
+    <updated>2014-03-06T16:09:00+08:00</updated>
+    <id>http://suzhen.github.com/blog/2014/03/06/shen-qi-de-hash</id>
+    <content type="html"><![CDATA[<p>hash是我们经常会用到一种数据结构。它有很多特别的有趣的特性是不被发现的。这片文章来总结一下：</p>
+
+<p>  Hash.new 初始化一个HASH对象。</p>
+
+<p>  ah1 = {}     #=>  {}</p>
+
+<p>  ah2 = Hash.new  #=> {}</p>
+
+<p>  以上两种是最基本的初始化方法。</p>
+
+<p>  ah3 = Hash.new("hello")   #=>{}</p>
+
+<p>  ah4 = Hash.new {|hash,key| hash[key] = "hello,#{key}"} #=>{}</p>
+
+<p>  以上两种初始化方法，是给hash对象没有value的key一个默认的value。</p>
+
+<p>  一： ah3["age"] 我们并没有赋值，ah3也没有这个key</p>
+
+<p>  但我们输出 ah3[“age"] 时，会出现 hello  ，无论我们使用什么key,只要没有赋值，输出的都是hello</p>
+
+<p>  二：ah4就更神奇了，输出的默认value，是和我们的key有了关系。比如：</p>
+
+<p>  ah4[“suzhen”] => hello,suzhen</p>
+
+<p>  ah4[“suyuchen”] => hello,suyuchen</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[RUBY魔法师(掏心篇)]]></title>
+    <link href="http://suzhen.github.com/blog/2014/03/06/rubymo-fa-shi-tao-xin-pian/"/>
+    <updated>2014-03-06T16:06:00+08:00</updated>
+    <id>http://suzhen.github.com/blog/2014/03/06/rubymo-fa-shi-tao-xin-pian</id>
+    <content type="html"><![CDATA[<p>ruby也有一些黑魔法，用的好，可以事半功倍，但是也存在着很大的风险。今天要讲的是打破一层一层的封装，跳过常规的读写方式，直接从object里获取或者设置instanc variable 的方法。</p>
+
+<p>  首先我们可以先了解 实例对象 ，类的实例对象， 类对象 三个概念。</p>
+
+<p>  施展两组黑魔法。</p>
+
+<p>   instance_variable_get 与  instance_variable_set</p>
+
+<p>   直接对一个对象或者类里面，获取和设置某个实例对象。注意在 获取和设置obj的实例对象的时候，要先确保obj的实例对象已经产生了。</p>
+
+<p>  class_variable_get 与 class_variable_set</p>
+
+<p>  直接对一个类，获取和设置类对象。</p>
 
 <p><div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">defined?</span> <span class="n">yuchen</span>         <span class="c1">#=&gt; nil</span>
-</span><span class='line'><span class="n">defined?</span> <span class="kp">true</span>         <span class="c1">#=&gt; “true”</span>
-</span><span class='line'><span class="n">defined?</span> <span class="vg">$*</span>           <span class="c1">#=&gt; &quot;global-variable&quot;</span>
-</span><span class='line'><span class="n">defined?</span> <span class="nb">Array</span>        <span class="c1">#=&gt; &quot;constant&quot;</span>
-</span><span class='line'><span class="n">defined?</span> <span class="no">Math</span><span class="o">::</span><span class="no">PI</span> <span class="c1">#=&gt; &quot;constant&quot;</span>
-</span><span class='line'><span class="n">defined?</span> <span class="n">num</span> <span class="o">=</span> <span class="mi">0</span>     <span class="c1">#=&gt; &quot;assignment&quot;</span>
-</span><span class='line'><span class="n">defined?</span> <span class="mi">100</span>         <span class="c1">#=&gt; &quot;expression&quot;</span>
-</span><span class='line'><span class="n">defined?</span> <span class="mi">100</span><span class="o">.</span><span class="n">times</span>   <span class="c1">#=&gt; &quot;method&quot;</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div></p>
-
-<p>除此之外还有一些用法：</p>
-
-<p>1、可以来判断是否有block,作用同block_given?
-<div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="o">&lt;</span><span class="sr">/p&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="sr">&lt;pre&gt;&lt;code&gt;class Base</span>
-</span><span class='line'><span class="sr">    def foo</span>
-</span><span class='line'><span class="sr">       puts defined? yield</span>
-</span><span class='line'><span class="sr">    end</span>
-</span><span class='line'><span class="sr">end</span>
-</span><span class='line'><span class="sr">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;</span><span class="sr">/pre&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="sr">&lt;p&gt;</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div></p>
-
-<p> <div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="o">&lt;</span><span class="sr">/p&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="sr">&lt;p&gt;a = Base.new</span>
-</span><span class='line'><span class="sr">a.foo</span>
-</span><span class='line'><span class="sr">a.foo {}</span>
-</span><span class='line'><span class="sr"> </span>
-</span></code></pre></td></tr></table></div></figure></notextile></div></p>
-
-<p>执行结果为：
- <div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'> <span class="kp">nil</span>
-</span><span class='line'> <span class="k">yield</span> <span class="c1">#如果有block输出&quot;yield&quot;</span>
-</span><span class='line'>
-</span></code></pre></td></tr></table></div></figure></notextile></div></p>
-
-<p>2、可以来判断方法里是否有super方法
-<div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
 <span class='line-number'>4</span>
@@ -109,120 +87,61 @@
 <span class='line-number'>20</span>
 <span class='line-number'>21</span>
 <span class='line-number'>22</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="o">&lt;</span><span class="sr">/p&gt;</span>
+<span class='line-number'>23</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'>  <span class="k">class</span> <span class="nc">G</span><span class="o">&lt;</span><span class="sr">/p&gt;</span>
 </span><span class='line'>
-</span><span class='line'><span class="sr">&lt;p&gt;class Base&lt;/</span><span class="nb">p</span><span class="o">&gt;</span>
+</span><span class='line'><span class="sr">&lt;pre&gt;&lt;code&gt;@@class_variable = 33</span>
+</span><span class='line'><span class="sr">@class_instance_variable = 55</span>
+</span><span class='line'><span class="sr">def initialize</span>
+</span><span class='line'><span class="sr">  @instance_variable_1 ||= 44</span>
+</span><span class='line'><span class="sr">end</span>
 </span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="n">pre</span><span class="o">&gt;&lt;</span><span class="n">code</span><span class="o">&gt;</span>    <span class="k">def</span> <span class="nf">foo</span>
-</span><span class='line'>    <span class="k">end</span>
-</span><span class='line'><span class="o">&lt;</span><span class="sr">/code&gt;&lt;/</span><span class="n">pre</span><span class="o">&gt;</span>
+</span><span class='line'><span class="sr">def build_var2</span>
+</span><span class='line'><span class="sr">  @instance_variable_2 = 22</span>
+</span><span class='line'><span class="sr">end</span>
+</span><span class='line'><span class="sr">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;</span><span class="sr">/pre&gt;</span>
 </span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="nb">p</span><span class="o">&gt;</span><span class="k">end</span><span class="o">&lt;</span><span class="sr">/p&gt;</span>
+</span><span class='line'><span class="sr">&lt;p&gt;  end&lt;/</span><span class="nb">p</span><span class="o">&gt;</span>
 </span><span class='line'>
-</span><span class='line'><span class="sr">&lt;p&gt;class Derived &amp;lt; Base&lt;/</span><span class="nb">p</span><span class="o">&gt;</span>
+</span><span class='line'><span class="o">&lt;</span><span class="nb">p</span><span class="o">&gt;</span>  <span class="n">g</span> <span class="o">=</span> <span class="n">G</span><span class="o">.</span><span class="n">new</span><span class="p">()</span>
+</span><span class='line'>  <span class="n">g</span><span class="o">.</span><span class="n">build_var2</span><span class="o">&lt;</span><span class="sr">/p&gt;</span>
 </span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="n">pre</span><span class="o">&gt;&lt;</span><span class="n">code</span><span class="o">&gt;</span>    <span class="k">def</span> <span class="nf">foo</span>
-</span><span class='line'>       <span class="nb">puts</span> <span class="n">defined?</span> <span class="k">super</span>
-</span><span class='line'>    <span class="k">end</span>
+</span><span class='line'><span class="sr">&lt;p&gt;  p  g.instance_variable_get(&quot;@instance_variable_1&quot;) #=&gt; 44</span>
+</span><span class='line'><span class="sr">  p G.class_variable_get(:@@class_variable)  #=&gt; 33</span>
+</span><span class='line'><span class="sr">  p G.instance_variable_get(:@class_instance_variable)  #=&gt; 55&lt;/</span><span class="nb">p</span><span class="o">&gt;</span>
 </span><span class='line'>
-</span><span class='line'>    <span class="k">def</span> <span class="nf">fun</span>
-</span><span class='line'>       <span class="nb">puts</span> <span class="n">defined?</span> <span class="k">super</span>
-</span><span class='line'>    <span class="k">end</span>
-</span><span class='line'><span class="o">&lt;</span><span class="sr">/code&gt;&lt;/</span><span class="n">pre</span><span class="o">&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="nb">p</span><span class="o">&gt;</span><span class="k">end</span>
+</span><span class='line'><span class="o">&lt;</span><span class="nb">p</span><span class="o">&gt;</span>
 </span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
-<p> <div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="o">&lt;</span><span class="sr">/p&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="sr">&lt;p&gt;obj = Derived.new</span>
-</span><span class='line'><span class="sr">obj.foo</span>
-</span><span class='line'><span class="sr">obj.fun</span>
-</span><span class='line'><span class="sr"> </span>
-</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+<p>  注意这两组黑魔法的argument可以有种形式，一种是string，一种是sym。string就意味着可以拼接一个参数。</p>
 
-<p>执行结果为：
- <div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'> <span class="k">super</span>
-</span><span class='line'> <span class="kp">nil</span>
-</span><span class='line'>
-</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+<p>  这两组黑魔法，都是打破了OO的封闭。这样的好处是很直接就可以操作一个对象的核心的变量，如果这些变量并没有提供对外存取的method。但要注意到普通对象的实例变量是惰性的，不会在定义中就生成，只能在运行中产生实例变量。</p>
 
-<p>注意一点。如果defined?的参数是一段语句，那是不能被执行的。
-<div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="o">&lt;</span><span class="sr">/p&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="sr">&lt;p&gt;p defined?(def x; end)   # &quot;expression&quot;</span>
-</span><span class='line'><span class="sr">x                        # error: undefined method or variable</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+<p>  那我们想知道运行中对象都产生了哪些实例对象呢?</p>
+
+<p>  p g.instance_variables  #=>[:@instance_variable_1,:@instance_variable_2]</p>
+
+<p>  或者都我们在存取实例对象的时候，先判断一下这个instance variable是否已经生成。</p>
 
 <p><div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
 <span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="o">&lt;</span><span class="sr">/p&gt;</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'>   <span class="n">g</span> <span class="o">=</span> <span class="n">G</span><span class="o">.</span><span class="n">new</span><span class="p">()</span>
+</span><span class='line'>   <span class="nb">p</span> <span class="n">g</span><span class="o">.</span><span class="n">instance_variable_defined?</span><span class="p">(</span><span class="ss">:@instance_variable_1</span><span class="p">)</span> <span class="c1">#=&gt; true</span>
+</span><span class='line'>   <span class="nb">p</span> <span class="n">g</span><span class="o">.</span><span class="n">instance_variable_defined?</span><span class="p">(</span><span class="ss">:@instance_variable_2</span><span class="p">)</span> <span class="c1">#=&gt; false</span>
+</span><span class='line'>   <span class="n">g</span><span class="o">.</span><span class="n">build_var2</span>
+</span><span class='line'>   <span class="nb">p</span> <span class="n">g</span><span class="o">.</span><span class="n">instance_variable_defined?</span><span class="p">(</span><span class="ss">:@instance_variable_2</span><span class="p">)</span> <span class="c1">#=&gt; true&lt;/p&gt;</span>
 </span><span class='line'>
-</span><span class='line'><span class="sr">&lt;p&gt;p defined?(@x=1)         # &quot;assignment&quot;</span>
-</span><span class='line'><span class="sr">p @x                     # nil</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div></p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[点滴知识积累]]></title>
-    <link href="http://suzhen.github.com/blog/2012/12/13/ruby-shard/"/>
-    <updated>2012-12-13T02:09:00+08:00</updated>
-    <id>http://suzhen.github.com/blog/2012/12/13/ruby-shard</id>
-    <content type="html"><![CDATA[<p>1) 在程序中经常看见“<strong>__FILE__</strong>”（注意是左边两个下划线，右边两下划线）,这代
-表“<strong>__FILE__</strong>”所在文件的文件名。如果“<strong>__FILE__</strong>”是在require或者load的文件中，则是代
-表被包含文件的绝对路径和文件名。</p>
+</span><span class='line'><span class="o">&lt;</span><span class="nb">p</span><span class="o">&gt;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+   魔法使用场景： 我们发现以上说的黑魔法都是public的,。那么instance_variable_get/set同样可以在类内部使用。但是instance_variable在method之间是可以自由获取和设置的。为什么还会用的到instance_variable_get/set呢?</p>
 
-<p>a.rb文件:</p>
-
-<pre><code><div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="nb">p</span> <span class="bp">__FILE__</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div> 
-</code></pre>
-
-<p>b.rb文件</p>
-
-<pre><code><div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="nb">require</span> <span class="s2">&quot;./a&quot;</span>
-</span><span class='line'><span class="nb">p</span> <span class="bp">__FILE__</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div> 
-</code></pre>
-
-<p>执行ruby b.rb,输出：</p>
-
-<pre><code>/home/suzhen/workspace/a.rb
-b.rb 
-</code></pre>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[class和module（基础篇）]]></title>
-    <link href="http://suzhen.github.com/blog/2012/12/05/class-module-basic/"/>
-    <updated>2012-12-05T00:39:00+08:00</updated>
-    <id>http://suzhen.github.com/blog/2012/12/05/class-module-basic</id>
-    <content type="html"><![CDATA[<p>   Class与Module是ruby程序大框架的基本构成。掌握好class与module的设计，对ruby程序的层次的清晰和扩展是非常重要的。class名与module名也都是常量。和我们定义的常量在某种意义上说没有区别。第一个字母都必须是大写。Class类是Module的子类，class是一特殊形式的模块。我们应该牢记最顶级的类是Object,最顶级的模块就是Kernel。我们从最简单的开始了解和熟悉他们的用法与设计。</p>
-
-<p>   一、module的创建与mixin</p>
-
-<p>   例子一：
- <div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<p>  看如下的例子：
+  <div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
 <span class='line-number'>4</span>
@@ -248,60 +167,76 @@ b.rb
 <span class='line-number'>24</span>
 <span class='line-number'>25</span>
 <span class='line-number'>26</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="o">&lt;</span><span class="sr">/p&gt;</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'>  <span class="k">class</span> <span class="nc">Volume</span><span class="o">&lt;</span><span class="sr">/p&gt;</span>
 </span><span class='line'>
-</span><span class='line'><span class="sr">&lt;pre&gt;&lt;code&gt;#创建module</span>
-</span><span class='line'><span class="sr">module Mymodule</span>
-</span><span class='line'><span class="sr">  def say</span>
-</span><span class='line'><span class="sr">    puts &quot;</span><span class="si">#{</span><span class="nb">self</span><span class="o">.</span><span class="n">class</span><span class="si">}</span><span class="sr"> say: hello&quot;</span>
-</span><span class='line'><span class="sr">  end</span>
-</span><span class='line'><span class="sr">  #不仅能定义实例方法，还能定义常量，实例对象，类对象，宏，甚至是initialize方法。</span>
+</span><span class='line'><span class="sr">&lt;pre&gt;&lt;code&gt;ATTRIBUTES = [</span>
+</span><span class='line'><span class="sr">  :name, :size, :type, :owner, :date_created, :date_modified,</span>
+</span><span class='line'><span class="sr">  :iscsi_target, :iscsi_portal</span>
+</span><span class='line'><span class="sr">].freeze</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">ATTRIBUTES.each do |attr|</span>
+</span><span class='line'><span class="sr">  attr_accessor attr</span>
 </span><span class='line'><span class="sr">end</span>
 </span><span class='line'>
-</span><span class='line'><span class="sr">module Myothermodule</span>
-</span><span class='line'><span class="sr">  def cry</span>
-</span><span class='line'><span class="sr">    puts &quot;</span><span class="si">#{</span><span class="nb">self</span><span class="si">}</span><span class="sr"> cry: wawawa~&quot;</span>
+</span><span class='line'><span class="sr">SYSTEM = 0</span>
+</span><span class='line'><span class="sr">DATA = 1</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">DEFAULTS = {</span>
+</span><span class='line'><span class="sr">  :type =&amp;gt; SYSTEM</span>
+</span><span class='line'><span class="sr">}.freeze</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">def initialize(args = nil)</span>
+</span><span class='line'><span class="sr">  # EDIT</span>
+</span><span class='line'><span class="sr">  # args = args ? DEFAULTS : DEFAULTS.merge(args) # Original</span>
+</span><span class='line'><span class="sr">  args = args ? DEFAULTS.merge(args) : DEFAULTS</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">  ATTRIBUTES.each do |attr|</span>
+</span><span class='line'><span class="sr">    if (args.key?(attr))</span>
+</span><span class='line'><span class="sr">        instance_variable_set(&quot;@</span><span class="si">#{</span><span class="kp">attr</span><span class="si">}</span><span class="sr">&quot;, args[attr])</span>
+</span><span class='line'><span class="sr">    ＃instance_variable_set的argument是可以用string拼接的，就有了很大的灵活性。这样也就行成了元编程。否则就要@name = args[:name];@size=args[:size]… 我们也可以用__send__方法来解决。</span>
+</span><span class='line'><span class="sr">      # self.__send__ &quot;</span><span class="si">#{</span><span class="kp">attr</span><span class="si">}</span><span class="sr">=&quot;,args[attr]</span>
+</span><span class='line'><span class="sr">    end</span>
 </span><span class='line'><span class="sr">  end</span>
 </span><span class='line'><span class="sr">end</span>
 </span><span class='line'>
-</span><span class='line'><span class="sr">#在类中引用module</span>
-</span><span class='line'><span class="sr">class Myfirstclass</span>
-</span><span class='line'><span class="sr">  include Mymodule #include说明module里的方法是被当作实例方法被引用的,方法里的self代表对象</span>
-</span><span class='line'><span class="sr">  extend Myothermodule #extend说明module里的方法是被当作类方法被引用的，方法里的self代表类</span>
+</span><span class='line'><span class="sr">def inspect</span>
+</span><span class='line'><span class="sr">  ATTRIBUTES.inject({ }) do |h, attr|</span>
+</span><span class='line'><span class="sr">    h[attr] = instance_variable_get(&quot;@</span><span class="si">#{</span><span class="kp">attr</span><span class="si">}</span><span class="sr">&quot;)</span>
+</span><span class='line'><span class="sr">    h</span>
+</span><span class='line'><span class="sr">  end</span>
+</span><span class='line'><span class="sr">end</span>
 </span><span class='line'>
-</span><span class='line'><span class="sr">  #无论哪种引用，都要把module里的代码从头到底执行一遍，和定义类一样。</span>
+</span><span class='line'><span class="sr">def to_json</span>
+</span><span class='line'><span class="sr">  self.inspect.to_json</span>
 </span><span class='line'><span class="sr">end</span>
 </span><span class='line'><span class="sr">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;</span><span class="sr">/pre&gt;</span>
 </span><span class='line'>
-</span><span class='line'><span class="sr">&lt;p&gt; </span>
+</span><span class='line'><span class="sr">&lt;p&gt;  end</span>
 </span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
-<p> <div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="o">&lt;</span><span class="sr">/p&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="sr">&lt;pre&gt;&lt;code&gt;fobj=Myfirstclass.new</span>
-</span><span class='line'><span class="sr">fobj.say #Myfirstclass say : hello</span>
-</span><span class='line'><span class="sr">Myfirstclass.cry #Myothermodule say: wawawa~</span>
-</span><span class='line'><span class="sr">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;</span><span class="sr">/pre&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="sr">&lt;p&gt; </span>
-</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+<p>  在类的内也有针对instance variable的操作。</p>
 
-<p>可以用类的included_modules方法查看该类包含了多少个module，当然不包括extend的。</p>
-
-<pre><code>Myclass.included_modules 
-</code></pre>
-
-<p>例子二：
-我们还可以先不用在类里面混入模块，而是在类的实例里混入模块，可以达到同样的效果。
- <div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<p>  移除实例变量的方法：remove_instance_variable 这个方法是private
+<div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
 <span class='line-number'>4</span>
@@ -313,21 +248,37 @@ b.rb
 <span class='line-number'>10</span>
 <span class='line-number'>11</span>
 <span class='line-number'>12</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="o">&lt;</span><span class="sr">/p&gt;</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'>  <span class="k">class</span> <span class="nc">Dummy</span><span class="o">&lt;</span><span class="sr">/p&gt;</span>
 </span><span class='line'>
-</span><span class='line'><span class="sr">&lt;pre&gt;&lt;code&gt;module Mymodule</span>
-</span><span class='line'><span class="sr">  def say</span>
-</span><span class='line'><span class="sr">     puts &quot;hello&quot;</span>
-</span><span class='line'><span class="sr">  end</span>
+</span><span class='line'><span class="sr">&lt;pre&gt;&lt;code&gt;attr_reader :var</span>
+</span><span class='line'><span class="sr">def initialize</span>
+</span><span class='line'><span class="sr">  @var = 99</span>
 </span><span class='line'><span class="sr">end</span>
-</span><span class='line'><span class="sr">class Myclass</span>
+</span><span class='line'><span class="sr">def remove</span>
+</span><span class='line'><span class="sr">  remove_instance_variable(:@var)</span>
 </span><span class='line'><span class="sr">end</span>
 </span><span class='line'><span class="sr">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;</span><span class="sr">/pre&gt;</span>
 </span><span class='line'>
-</span><span class='line'><span class="sr">&lt;p&gt;  </span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-*用实例对象extend模块就是实例方法
- <div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</span><span class='line'><span class="sr">&lt;p&gt;  end</span>
+</span><span class='line'><span class="sr">  d = Dummy.new</span>
+</span><span class='line'><span class="sr">  d.var      #=&gt; 99</span>
+</span><span class='line'><span class="sr">  d.remove   #=&gt; 99</span>
+</span><span class='line'><span class="sr">  d.var      #=&gt; nil</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[RUBY动态调用方法]]></title>
+    <link href="http://suzhen.github.com/blog/2014/03/06/rubydong-tai-diao-yong-fang-fa/"/>
+    <updated>2014-03-06T16:03:00+08:00</updated>
+    <id>http://suzhen.github.com/blog/2014/03/06/rubydong-tai-diao-yong-fang-fa</id>
+    <content type="html"><![CDATA[<p>有三种方式：
+<div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
 <span class='line-number'>4</span>
@@ -335,55 +286,525 @@ b.rb
 <span class='line-number'>6</span>
 <span class='line-number'>7</span>
 <span class='line-number'>8</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="o">&lt;</span><span class="sr">/p&gt;</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'>  <span class="k">class</span> <span class="nc">Dummy</span><span class="o">&lt;</span><span class="sr">/p&gt;</span>
 </span><span class='line'>
-</span><span class='line'><span class="sr">&lt;pre&gt;&lt;code&gt;obj = Myclass.new</span>
-</span><span class='line'><span class="sr">obj.extend(Mymodule)</span>
-</span><span class='line'><span class="sr">obj.say #hello</span>
+</span><span class='line'><span class="sr">&lt;pre&gt;&lt;code&gt;attr_accessor :host</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">def initialize(name)</span>
+</span><span class='line'><span class="sr">  @host = name</span>
+</span><span class='line'><span class="sr">end</span>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'><span class="sr">def say(content)</span>
+</span><span class='line'><span class="sr">  puts &quot;Hi,</span><span class="si">#{</span><span class="n">host</span><span class="si">}</span><span class="sr">,</span><span class="si">#{</span><span class="n">content</span><span class="si">}</span><span class="sr">&quot;</span>
+</span><span class='line'><span class="sr">end</span>
 </span><span class='line'><span class="sr">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;</span><span class="sr">/pre&gt;</span>
 </span><span class='line'>
-</span><span class='line'><span class="sr">&lt;p&gt;  </span>
+</span><span class='line'><span class="sr">&lt;p&gt;  end</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+  第一种用send动态调用</p>
+
+<p>  <div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'>  <span class="no">Dummy</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s2">&quot;suzhen&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="ss">:say</span><span class="p">,</span><span class="s2">&quot;how are you&quot;</span><span class="p">)</span>
+</span><span class='line'>
 </span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
-<p>*用动态派发的方式也可以mixin一个模块
- <div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<p>  第二种用method来获取某个方法，用call来调用。也算是延迟调用。
+  <div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="o">&lt;</span><span class="sr">/p&gt;</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'>  <span class="n">m</span> <span class="o">=</span> <span class="no">Dummy</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s2">&quot;suzhen&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">method</span><span class="p">(</span><span class="ss">:say</span><span class="p">)</span>
+</span><span class='line'>  <span class="n">m</span><span class="o">.</span><span class="n">call</span><span class="p">(</span><span class="s2">&quot;how are you&quot;</span><span class="p">)</span>
 </span><span class='line'>
-</span><span class='line'><span class="sr">&lt;pre&gt;&lt;code&gt;Myclass.send :include,Mymodule</span>
-</span><span class='line'><span class="sr">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;</span><span class="sr">/pre&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="sr">&lt;p&gt; </span>
 </span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
-<p>*用类extend模块就是类方法
- <div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<p>  第三种用eval来动态调用
+  <div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'>  <span class="nb">eval</span> <span class="s2">&quot;Dummy.new(&#39;suzhen&#39;).say(&#39;how are you&#39;)&quot;</span>
+</span><span class='line'>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[RUBY魔法师（方法高级篇）]]></title>
+    <link href="http://suzhen.github.com/blog/2014/02/23/rubymo-fa-shi-%28fang-fa-gao-ji-pian-%29/"/>
+    <updated>2014-02-23T11:37:00+08:00</updated>
+    <id>http://suzhen.github.com/blog/2014/02/23/rubymo-fa-shi-(fang-fa-gao-ji-pian-)</id>
+    <content type="html"><![CDATA[<p>  一、动态创建method和动态调用方法</p>
+
+<p>  问题：什么是动态创建和动态调用方法？
+  答：就是代码在运行过程时，才定义的方法。同样，只有在代码运行时，才能开始调用的方法，是动态调用方法，这是一组很有用的魔法。</p>
+
+<p>  魔法师用define_method来动态创建实例方法：</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
 <span class='line-number'>4</span>
 <span class='line-number'>5</span>
 <span class='line-number'>6</span>
 <span class='line-number'>7</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="o">&lt;</span><span class="sr">/p&gt;</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'>  <span class="k">class</span> <span class="nc">Dummy</span><span class="o">&lt;</span><span class="sr">/p&gt;</span>
 </span><span class='line'>
-</span><span class='line'><span class="sr">&lt;pre&gt;&lt;code&gt;Myclass.extend(Mymodule)</span>
-</span><span class='line'><span class="sr">Myclass.say #hello</span>
+</span><span class='line'><span class="sr">&lt;pre&gt;&lt;code&gt;#动态创建一个实例方法say_hi</span>
+</span><span class='line'><span class="sr">define_method :say_hi do | name |</span>
+</span><span class='line'><span class="sr">  puts &quot;HI,</span><span class="si">#{</span><span class="nb">name</span><span class="si">}</span><span class="sr">&quot;</span>
+</span><span class='line'><span class="sr">end</span>
+</span><span class='line'><span class="sr">#动态创建一个类方法say_hello</span>
+</span><span class='line'><span class="sr">class &amp;lt;&amp;lt; self</span>
+</span><span class='line'><span class="sr">  define_method :say_hello do | name |</span>
+</span><span class='line'><span class="sr">    puts &quot;Hello,</span><span class="si">#{</span><span class="nb">name</span><span class="si">}</span><span class="sr">&quot;</span>
+</span><span class='line'><span class="sr">  end</span>
+</span><span class='line'><span class="sr">end</span>
 </span><span class='line'><span class="sr">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;</span><span class="sr">/pre&gt;</span>
 </span><span class='line'>
-</span><span class='line'><span class="sr">&lt;p&gt; </span>
+</span><span class='line'><span class="sr">&lt;p&gt;  end&lt;/</span><span class="nb">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nb">p</span><span class="o">&gt;</span>  <span class="no">Dummy</span><span class="o">.</span><span class="n">new</span><span class="o">.</span><span class="n">say_hi</span><span class="p">(</span><span class="s2">&quot;suzhen&quot;</span><span class="p">)</span> <span class="c1">#-&gt;  HI,suzhen&lt;/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nb">p</span><span class="o">&gt;</span>  <span class="no">Dummy</span><span class="o">.</span><span class="n">say_hello</span><span class="p">(</span><span class="s2">&quot;suzhen&quot;</span><span class="p">)</span> <span class="c1">#-&gt; Hello,suzhen&lt;/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nb">p</span><span class="o">&gt;</span>
 </span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
-<p>   以上的写法更多的是用在module的callback中</p>
+<p>  创建单例方法：</p>
 
-<p>说明：module的作用之一是把若干类中，共有的逻辑部分提出来，起到“一处定义修改，所有引入”均可以改动的意义，目的是为了更好的组织类方法和实例方法。
-我们可以把两个module放在别外一个文件内module.rb，在class文件里只要需要引用(require "路径/module")就可以使用。
-重构代码的一步。mixin从技术层次理解，就是ruby自动创建了一个module名的代理类，并且让Myfirstclass类继承了这个代理类。实现一个类可以继承多个类的效果。
-比如fobj或者sobj寻找方法，会先从自身类去找，如果找不到就从自身类的代理类去找，还找不到再从父类去找，如果还找不到，就去父类的代理找，一直向上。如果在某一处找到了，就停止寻找了。
-还有一点要注意的是同名方法的查找,后面模块的引用方法覆盖前面模块的引用方法的. 如下例子</p>
+<p><div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'>  <span class="n">obj</span> <span class="o">=</span> <span class="no">Dummy</span><span class="o">.</span><span class="n">new</span>
+</span><span class='line'>  <span class="n">obj2</span> <span class="o">=</span> <span class="no">Dummy</span><span class="o">.</span><span class="n">new</span>
+</span><span class='line'>  <span class="k">class</span> <span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span> <span class="n">obj</span><span class="o">&lt;</span><span class="sr">/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;pre&gt;&lt;code&gt;    define_method :say_hi do</span>
+</span><span class='line'><span class="sr">      puts &quot;HI&quot;</span>
+</span><span class='line'><span class="sr">    end</span>
+</span><span class='line'><span class="sr">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;</span><span class="sr">/pre&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;p&gt;   end&lt;/</span><span class="nb">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nb">p</span><span class="o">&gt;</span>   <span class="n">obj</span><span class="o">.</span><span class="n">say_hi</span> <span class="c1">#-&gt;HI</span>
+</span><span class='line'>   <span class="n">obj</span><span class="o">.</span><span class="n">say_hi</span> <span class="c1">#-&gt; mt_ad.rb:30:in &lt;code&gt;&amp;lt;main&amp;gt;&#39;: undefined method&lt;/code&gt;say_hi&#39; for #&amp;lt;Dummy:0x007fce6c109068&gt; (NoMethodError)</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>  说明：</p>
+
+<p>  1、define_method是一个private方法</p>
+
+<p>  2、由于define_method是一个private方法，它不能被显式调用。</p>
+
+<p>  3、define_method是Module类的一个instance_method,只能由一个具体的module和一个具体的class来调用。</p>
+
+<pre><code>因为:
+</code></pre>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'>  <span class="k">module</span> <span class="nn">DummyModule</span><span class="p">;</span> <span class="k">end</span><span class="o">&lt;</span><span class="sr">/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;p&gt;  class Dummy; end&lt;/</span><span class="nb">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nb">p</span><span class="o">&gt;</span>  <span class="nb">p</span> <span class="no">DummyModule</span><span class="o">.</span><span class="n">class</span> <span class="c1">#—&gt;Module&lt;/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nb">p</span><span class="o">&gt;</span>  <span class="nb">p</span> <span class="no">Dummy</span><span class="o">.</span><span class="n">class</span> <span class="c1">#—&gt;Class&lt;/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nb">p</span><span class="o">&gt;</span>  <span class="nb">p</span> <span class="no">Dummy</span><span class="o">.</span><span class="n">class</span><span class="o">.</span><span class="n">superclass</span> <span class="c1">#—&gt;Module&lt;/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nb">p</span><span class="o">&gt;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>  一个具体的module或者一个具体的class都是Module类的实例。</p>
+
+<p>  4、为当前self(必须是类，不管是普通类还是eigenclass)创建一个instance method,换句话说就是define_method消息的接收者只能是类对象。</p>
+
+<p>  比如：</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'>  <span class="no">Dummy</span><span class="o">.</span><span class="n">instance_eval</span> <span class="k">do</span><span class="o">&lt;</span><span class="sr">/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;pre&gt;&lt;code&gt;#当前self是Dummy类本身，所以此处定义的是Dummy的实例方法。</span>
+</span><span class='line'><span class="sr">define_method :say_hello do</span>
+</span><span class='line'><span class="sr">  puts &quot;hello,suzhen&quot;</span>
+</span><span class='line'><span class="sr">end</span>
+</span><span class='line'><span class="sr">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;</span><span class="sr">/pre&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;p&gt;  end&lt;/</span><span class="nb">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nb">p</span><span class="o">&gt;</span>  <span class="k">class</span> <span class="nc">Dummy</span><span class="o">&lt;</span><span class="sr">/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;pre&gt;&lt;code&gt;def self.create_method</span>
+</span><span class='line'><span class="sr">  #类方法中的self，代表的也是Dummy类本身，所以此处定义的是Dummy的实例方法。</span>
+</span><span class='line'><span class="sr">  define_method :say_hi do </span>
+</span><span class='line'><span class="sr">    puts &quot;suzhen&quot;</span>
+</span><span class='line'><span class="sr">  end</span>
+</span><span class='line'><span class="sr">end</span>
+</span><span class='line'><span class="sr">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;</span><span class="sr">/pre&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;p&gt;  end&lt;/</span><span class="nb">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nb">p</span><span class="o">&gt;</span>  <span class="no">Dummy</span><span class="o">.</span><span class="n">new</span><span class="o">.</span><span class="n">say_hello</span><span class="o">&lt;</span><span class="sr">/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;p&gt;  Dummy.create_method&lt;/</span><span class="nb">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nb">p</span><span class="o">&gt;</span>  <span class="no">Dummy</span><span class="o">.</span><span class="n">new</span><span class="o">.</span><span class="n">say_hi</span><span class="o">&lt;</span><span class="sr">/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;p&gt;  ————————————————————&lt;/</span><span class="nb">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nb">p</span><span class="o">&gt;</span>  <span class="k">class</span> <span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span> <span class="no">Dummy</span><span class="o">&lt;</span><span class="sr">/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;pre&gt;&lt;code&gt;#此处的self是Dummy的eigenclass，所以就是创建eigenclass类的实例方法，也就是Dummy的类方法。</span>
+</span><span class='line'><span class="sr">define_method :say_bye do</span>
+</span><span class='line'><span class="sr">  puts &quot;bye&quot;</span>
+</span><span class='line'><span class="sr">end</span>
+</span><span class='line'><span class="sr">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;</span><span class="sr">/pre&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;p&gt;  end&lt;/</span><span class="nb">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nb">p</span><span class="o">&gt;</span>  <span class="no">Dummy</span><span class="o">.</span><span class="n">say_bye</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>  或者：</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'>  <span class="k">class</span> <span class="nc">Dummy</span><span class="o">&lt;</span><span class="sr">/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;pre&gt;&lt;code&gt;def self.create_class_method </span>
+</span><span class='line'><span class="sr">  class &amp;lt;&amp;lt; self</span>
+</span><span class='line'><span class="sr">     define_method :say_love do</span>
+</span><span class='line'><span class="sr">      puts &quot;love&quot;</span>
+</span><span class='line'><span class="sr">     end </span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">  end</span>
+</span><span class='line'><span class="sr">end</span>
+</span><span class='line'><span class="sr">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;</span><span class="sr">/pre&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;p&gt;  end&lt;/</span><span class="nb">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nb">p</span><span class="o">&gt;</span>  <span class="no">Dummy</span><span class="o">.</span><span class="n">create_class_method</span>
+</span><span class='line'>  <span class="no">Dummy</span><span class="o">.</span><span class="n">say_love</span> <span class="c1">#—&gt; love&lt;/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nb">p</span><span class="o">&gt;</span>  <span class="err">————————————————————</span><span class="o">&lt;</span><span class="sr">/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;p&gt;  class Dummy&lt;/</span><span class="nb">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">pre</span><span class="o">&gt;&lt;</span><span class="n">code</span><span class="o">&gt;</span>  <span class="k">def</span> <span class="nf">define_new_method_by_other_method</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c1">#注意这里的self代表的是Dummy的实例对象。并不是类对象，所以是没有define_method方法的。</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="n">define_method</span> <span class="ss">:say_hi</span> <span class="k">do</span> <span class="o">|</span> <span class="nb">name</span> <span class="o">|</span>
+</span><span class='line'>      <span class="nb">puts</span> <span class="s2">&quot;HI,</span><span class="si">#{</span><span class="nb">name</span><span class="si">}</span><span class="s2">&quot;</span>
+</span><span class='line'>    <span class="k">end</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'><span class="o">&lt;</span><span class="sr">/code&gt;&lt;/</span><span class="n">pre</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nb">p</span><span class="o">&gt;</span>  <span class="k">end</span><span class="o">&lt;</span><span class="sr">/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;p&gt;  Dummy.new.define_new_method_by_other_method #报错&lt;/</span><span class="nb">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nb">p</span><span class="o">&gt;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>  综上所述可以看出，我们在使用define_method方法都是在当前类的内部。而作为private方法是不可以在外面调用的，比如：</p>
+
+<p>  Dummy.define_method :say_hi do end # 访问保护</p>
+
+<p>  或者</p>
+
+<p>  obj = Dummy.new</p>
+
+<p>  obj.class.define_method :say_hi do end＃访问保护</p>
+
+<p>  但魔法师当然有他的魔术：send</p>
+
+<p>  send 不仅可以动态调用方法，还可以调用私有方法。</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'>  <span class="nb">proc</span> <span class="o">=</span> <span class="nb">lambda</span><span class="p">{</span> <span class="nb">puts</span> <span class="s2">&quot;suzhen&quot;</span> <span class="p">}</span>
+</span><span class='line'>  <span class="no">Dummy</span><span class="o">.</span><span class="n">send</span> <span class="ss">:define_method</span><span class="p">,</span><span class="ss">:say_hi</span><span class="p">,</span><span class="o">&amp;</span><span class="n">amp</span><span class="p">;</span><span class="nb">proc</span>
+</span><span class='line'>  <span class="no">Dummy</span><span class="o">.</span><span class="n">new</span><span class="o">.</span><span class="n">say_hi</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+  或者</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'>  <span class="n">obj</span><span class="o">.</span><span class="n">class</span><span class="o">.</span><span class="n">send</span> <span class="ss">:define_method</span><span class="p">,</span><span class="ss">:say_hi</span><span class="p">,</span><span class="o">&amp;</span><span class="n">amp</span><span class="p">;</span><span class="nb">proc</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+  给obj的eigenclass动态定义方法</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'>  <span class="n">obj</span><span class="o">.</span><span class="n">singleton_class</span><span class="o">.</span><span class="n">send</span>  <span class="ss">:define_method</span><span class="p">,</span><span class="ss">:say_hi</span> <span class="k">do</span><span class="o">&lt;</span><span class="sr">/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;pre&gt;&lt;code&gt;puts  &quot;suzhen&quot;</span>
+</span><span class='line'><span class="sr">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;</span><span class="sr">/pre&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;p&gt;  end&lt;/</span><span class="nb">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nb">p</span><span class="o">&gt;</span>  <span class="n">obj</span><span class="o">.</span><span class="n">say_hi</span> <span class="c1">#suzhen&lt;/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nb">p</span><span class="o">&gt;</span>  <span class="n">obj2</span><span class="o">.</span><span class="n">say_hi</span> <span class="c1">#报错</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>  在类的外部动态创建类的类方法</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'>  <span class="no">Dummy</span><span class="o">.</span><span class="n">singleton_class</span><span class="o">.</span><span class="n">send</span>  <span class="ss">:define_method</span><span class="p">,</span><span class="ss">:say_hi</span> <span class="k">do</span><span class="o">&lt;</span><span class="sr">/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;pre&gt;&lt;code&gt;puts  &quot;suzhen&quot;</span>
+</span><span class='line'><span class="sr">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;</span><span class="sr">/pre&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;p&gt;  end&lt;/</span><span class="nb">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nb">p</span><span class="o">&gt;</span>  <span class="no">Dummy</span><span class="o">.</span><span class="n">say_hi</span> <span class="c1">#—&gt; suzhen&lt;/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nb">p</span><span class="o">&gt;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>  我们发现从外面给一个实例对象动态创建方法，或者给一个类动态创建方法，都需要先获取他们的eigenclass，再通过send 动态调用define_method方法，把要动态创建的方法名和block做为参数再传入。</p>
+
+<p>  这样太麻烦了。有没有简单点的方法呢？魔法师给了我们一个魔法：define_singleton_method 它是Object类的一个实例方法。</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'>  <span class="n">obj</span> <span class="o">=</span> <span class="no">Dummy</span><span class="o">.</span><span class="n">new</span>
+</span><span class='line'>  <span class="n">obj2</span> <span class="o">=</span> <span class="no">Dummy</span><span class="o">.</span><span class="n">new</span><span class="o">&lt;</span><span class="sr">/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;p&gt;  obj.define_singleton_method :say_hi do&lt;/</span><span class="nb">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">pre</span><span class="o">&gt;&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="nb">puts</span> <span class="s2">&quot;suzhen&quot;</span>
+</span><span class='line'><span class="o">&lt;</span><span class="sr">/code&gt;&lt;/</span><span class="n">pre</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nb">p</span><span class="o">&gt;</span>  <span class="k">end</span><span class="o">&lt;</span><span class="sr">/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;p&gt;  obj.say_hi #-&gt; suzhen&lt;/</span><span class="nb">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nb">p</span><span class="o">&gt;</span>  <span class="n">obj2</span><span class="o">.</span><span class="n">say_hi</span> <span class="c1">#-&gt;报错</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>  或者</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'>  <span class="no">Dummy</span><span class="o">.</span><span class="n">define_singleton_method</span> <span class="ss">:say_hello</span> <span class="k">do</span><span class="o">&lt;</span><span class="sr">/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;pre&gt;&lt;code&gt;  puts &quot;hello&quot;</span>
+</span><span class='line'><span class="sr">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;</span><span class="sr">/pre&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;p&gt;  end&lt;/</span><span class="nb">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nb">p</span><span class="o">&gt;</span>  <span class="no">Dummy</span><span class="o">.</span><span class="n">say_hello</span><span class="o">&lt;</span><span class="sr">/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;p&gt;  define_singleton_method 为我们的工作减少不小的工作量：</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>  1，减少获取eigenclass的过程： (class &lt;&lt; obj ;self; end) ｜ (class &lt;&lt; Dummy ;self; end) 或者obj.singeton_class | Dummy.singenton_class</p>
+
+<p>  2，减少了eigenclass使用send动态调用define_method的过程:   (eigenClass).send :define_method,agru,&amp;block</p>
+
+<p>  下一个要考虑的问题就是：</p>
+
+<p>  设置动态创建的method的权限。</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'>  <span class="n">obj</span><span class="o">.</span><span class="n">singleton_class</span><span class="o">.</span><span class="n">class_eval</span> <span class="k">do</span><span class="o">&lt;</span><span class="sr">/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;pre&gt;&lt;code&gt;  private  :say_hi </span>
+</span><span class='line'><span class="sr">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;</span><span class="sr">/pre&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;p&gt;  end</span>
+</span><span class='line'><span class="sr">  或者：</span>
+</span><span class='line'><span class="sr">  obj.singleton_class.send :private,:say_hi&lt;/</span><span class="nb">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nb">p</span><span class="o">&gt;</span>  <span class="n">obj</span><span class="o">.</span><span class="n">say_hi</span> <span class="err">＃报错</span><span class="o">&lt;</span><span class="sr">/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;p&gt;  Dummy.singleton_class.class_eval do&lt;/</span><span class="nb">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">pre</span><span class="o">&gt;&lt;</span><span class="n">code</span><span class="o">&gt;</span>  <span class="kp">private</span> <span class="ss">:say_hello</span>
+</span><span class='line'><span class="o">&lt;</span><span class="sr">/code&gt;&lt;/</span><span class="n">pre</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nb">p</span><span class="o">&gt;</span>  <span class="k">end</span><span class="o">&lt;</span><span class="sr">/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;p&gt;  Dummy.say_hello #报错</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>  我们来复习一下上面的内容发现：defind_methd 可以在一个普通类里动态定义方法，也可以在eigenClass里动态定义方法。可以在一个类内部动态定义方法，也可以在一个类外部通过send进行动态方法的定义。</p>
+
+<p>  以上说的是method的动态定义，动态执行。  那么根据增删查改的模式，我还要了解 “删”，“查”，“改”（重载或者）</p>
+
+<p>  那么如何删除一个方法？</p>
 
 <p> <div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
@@ -413,439 +834,89 @@ b.rb
 <span class='line-number'>26</span>
 <span class='line-number'>27</span>
 <span class='line-number'>28</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="o">&lt;</span><span class="sr">/p&gt;</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="o">&lt;</span><span class="n">br</span><span class="o">/&gt;</span>
+</span><span class='line'>  <span class="n">undef_method</span><span class="o">&lt;</span><span class="sr">/p&gt;</span>
 </span><span class='line'>
-</span><span class='line'><span class="sr">&lt;pre&gt;&lt;code&gt;module Pmodule</span>
-</span><span class='line'><span class="sr">  def say</span>
-</span><span class='line'><span class="sr">     puts &quot;proxy say: hello&quot;</span>
-</span><span class='line'><span class="sr">         super</span>
+</span><span class='line'><span class="sr">&lt;p&gt;  remove_method  相应的callback method_removed&lt;/</span><span class="nb">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nb">p</span><span class="o">&gt;</span>  <span class="k">class</span> <span class="nc">Parent</span><span class="o">&lt;</span><span class="sr">/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;pre&gt;&lt;code&gt;  def hello</span>
+</span><span class='line'><span class="sr">    puts &quot;In parent&quot;</span>
 </span><span class='line'><span class="sr">  end</span>
-</span><span class='line'><span class="sr">end</span>
-</span><span class='line'>
-</span><span class='line'><span class="sr">class Fclass</span>
-</span><span class='line'><span class="sr">  def say</span>
-</span><span class='line'><span class="sr">    puts &quot;father say:hello&quot;</span>
-</span><span class='line'><span class="sr">  end</span>
-</span><span class='line'><span class="sr">end</span>
-</span><span class='line'>
-</span><span class='line'><span class="sr">class Sclass&amp;lt;Fclass</span>
-</span><span class='line'><span class="sr">  include Pmodule</span>
-</span><span class='line'><span class="sr">  def say</span>
-</span><span class='line'><span class="sr">   puts &quot;son say:hello&quot;</span>
-</span><span class='line'><span class="sr">   super</span>
-</span><span class='line'><span class="sr">  end</span>
-</span><span class='line'><span class="sr">end</span>
-</span><span class='line'>
-</span><span class='line'><span class="sr">obj=Sclass.new</span>
-</span><span class='line'><span class="sr">obj.say</span>
 </span><span class='line'><span class="sr">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;</span><span class="sr">/pre&gt;</span>
 </span><span class='line'>
-</span><span class='line'><span class="sr">&lt;p&gt; </span>
-</span></code></pre></td></tr></table></div></figure></notextile></div></p>
-
-<p>输出：
- <div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="o">&lt;</span><span class="sr">/p&gt;</span>
+</span><span class='line'><span class="sr">&lt;p&gt;  end</span>
+</span><span class='line'><span class="sr">  class Child &amp;lt; Parent&lt;/</span><span class="nb">p</span><span class="o">&gt;</span>
 </span><span class='line'>
-</span><span class='line'><span class="sr">&lt;pre&gt;&lt;code&gt;&quot;son say:hello&quot;</span>
-</span><span class='line'><span class="sr">&quot;proxy say:hello&quot;    #super指向了module的方法say，而不是父类的say</span>
-</span><span class='line'><span class="sr">&quot;father say:hello&quot;   </span>
+</span><span class='line'><span class="o">&lt;</span><span class="n">pre</span><span class="o">&gt;&lt;</span><span class="n">code</span><span class="o">&gt;</span>  <span class="k">def</span> <span class="nf">hello</span>
+</span><span class='line'>    <span class="nb">puts</span> <span class="s2">&quot;In child&quot;</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'><span class="o">&lt;</span><span class="sr">/code&gt;&lt;/</span><span class="n">pre</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nb">p</span><span class="o">&gt;</span>  <span class="k">end</span><span class="o">&lt;</span><span class="sr">/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;p&gt;  c = Child.new</span>
+</span><span class='line'><span class="sr">  c.hello&lt;/</span><span class="nb">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nb">p</span><span class="o">&gt;</span>  <span class="k">class</span> <span class="nc">Child</span><span class="o">&lt;</span><span class="sr">/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;pre&gt;&lt;code&gt; remove_method :hello  # remove from child, still in parent</span>
 </span><span class='line'><span class="sr">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;</span><span class="sr">/pre&gt;</span>
 </span><span class='line'>
-</span><span class='line'><span class="sr">&lt;p&gt; </span>
-</span></code></pre></td></tr></table></div></figure></notextile></div></p>
-
-<p>   二、module与class的区别和理解</p>
-
-<p>   1、module是不能实例对象的，也就是module不能拥有自己的实例变量。在module里的实例变量只能被混入的类的使用。但是常量可以直接使用。</p>
-
-<pre><code> module Mymodule
-   PI=3.14
- end
- class Myclass
-   PI=3.14
- end
-
- Mymodule::PI #3.14
- Myclass::PI  #3.14
-</code></pre>
-
-<p>   2、module中的定义方法如果不是module的单例方法，只能混入类的被类或者类的对象执行。但如果是module的单例方法，那么可以直接执行，但不能被混入类中无论是(include,还是extend)。</p>
-
-<pre><code> module Mymodule
-    def self.say
-        puts "#{self} say: hello"
-    end
-    def cry
-        puts "wawawa~"
-    end
- end   
- Mymodule.say  #Mymodule say:hello
- Mymodule.cry   #error
-</code></pre>
-
-<p>我们可以把这个module使用一个更显得专业的写法</p>
-
-<pre><code> module Mymodule
-   class&lt;&lt;self
-      def say
-          puts "#{self} say: hello"
-      end
-   end
- end   
- Mymodule.say  #Mymodule say:hello
-</code></pre>
-
-<p>既然单例方法可以直接使用，那么如果我们写一个宏的话，那么也可以直接引用变量了。</p>
-
-<p>另一个例子：</p>
-
-<pre><code> module Mymodule
-  class&lt;&lt;self
-    attr_accessor :name
-    def say
-        self.name="suzhen"
-        puts "#{self.name} say: hello"
-    end
-  end
- end
- Mymodule.say  # suzhen.name say: hello
- puts Mymodule.name #suzhen
-</code></pre>
-
-<p>说明：name将成为Mymodule的一个变量一样可以使用了。非常的cool，感谢有ruby的单例方法。
-<strong>切记如果是module的单例方法混入是类里是没有用的。</strong></p>
-
-<p>三，module与class的嵌套
-   module里面可以嵌套若干个module，也可以嵌套若干个classs,class里面可以嵌套若干个class,也可以嵌套若干个module</p>
-
-<pre><code>module Mymodule
-  module Myothermodule
-    PI=3.14
-  end
-end
-
-puts Mymodule::Myothermodule::PI
-</code></pre>
-
-<p>输出：#3.14</p>
-
-<pre><code>class Myclass
-  module Mymodule
-    PI=3.14
-    def self.say(who)
-      Inclass.new.say(who)
-    end
-  end
-  class Inclass
-    def say(who)
-     puts "#{who},hello,world"
-    end
-  end
-  def sound
-    Inclass.new.say(self.class::Mymodule::PI)
-  end
-end
-puts Myclass::Mymodule::PI  #3.14
-puts Myclass::Mymodule.say("suzhen")  #suzhen,hello world
-puts Myclass.new.sound #3.14,hello world
-</code></pre>
-
-<p>   现在讨论一下嵌套的意义：
-   module嵌套class的意义就像namespace一样，可以把一部分相关的类逻辑上分开。
-   class里嵌套module也是同样的作用。我们在元编程中会，会打开一个类，把自己的逻辑写进去，这样我们就需要用一个module来把自己的逻辑隔开。好比一个独立的逻辑空间，该moduel通过class&lt;&lt;self...end使自身也带有方法，属性等。</p>
-
-<p>   这里有两个非常有用的方法：一个是来判断一个类或者模块里是否嵌套着别一个类或者模块。二个是来获取这个名称的类或者模块。</p>
-
-<pre><code>Mymodule.const_defined?("Myothermodule") 
-Mymodule.const_get("ClassMethods").class #Module
-</code></pre>
-
-<p>   通常会这种用：</p>
-
-<pre><code>base.extend const_get("ClassMethods") if const_defined?("ClassMethods")
-</code></pre>
-
-<p>   四、module的callback方法
-   module被include后会有一个callback的方法，我们可以重写这个方法来完成一些事。</p>
-
-<p>   例子一：</p>
-
-<pre><code>   module Mymodule
-     def self.included(cls)
-    puts "minix in #{cls}"
-     end
-   end
-
-   class Myclass
-      include Mymodule
-   end
-
-   输出：
-   minix in Myclass
-</code></pre>
-
-<p>   如果是这个module被extend则不会callback这个方法</p>
-
-<p>   说明：这个callback有一个非常有用的技巧可以用到。可以解决怎么在一个module中即有实例方法，又有类方法，而在混入类中只需要include就可以了。</p>
-
-<p>   例子二：</p>
-
-<pre><code>   module Base
-       #实例方法
-       def show  
-      puts "You came here!"  
-       end  
-
-       #扩展类方法  
-       def self.included(base)  
-      #额外创建几个类方法
-      def base.say  
-        puts "I'm strong!"  
-      end  
-      #混入类方法
-      base.extend(ClassMethods)  
-       end  
-
-       #类方法  
-       module ClassMethods  
-     def hello  
-       puts "Hello baby!"  
-     end  
-       end  
-   end  
-
-  class Bus  
-    include Base  
-   end 
-
-  Bus.new.show
-  Bus.say  
-  Bus.hello 
-</code></pre>
-
-<p>   五、module依赖另一个module的方式和问题</p>
-
-<p>例子一：</p>
-
-<pre><code>module Mymodule
-  def say
-    puts "#{self.name} say: hello" #这个self还是类或者类对象
-  end
-end
-
-module Myren
-  include Mymodule
-end
-
-class Myclass
-  include Myren
-  def name
-    name="suzhen"
-    name
-  end
-end
-
-a = Myclass.new
-a.say  #suzhen say:hello
-</code></pre>
-
-<p>   会出现的问题在是callback上</p>
-
-<pre><code>   module Mymodule
-     def self.included(base)
-       puts base  #Myren 而不是Myclass
-     end
-   end
-
-   module Myren
-     include Mymodule
-     def self.included(base)
-       puts base #这里才是Myclass
-     end
-   end
-
-   class Myclass
-     include Myren
-   end
-
-   a = Myclass.new
-</code></pre>
-
-<p>   问题：如果我想在Mymodule的included中做一些针对混入类的操作，就变的不可能了，因为此时的base是中间的那个module了，而不是混入类了。解决这个问题的笨方法就是</p>
-
-<p>   Myren中去掉include Mymodule,类Myclass中引入两个module</p>
-
-<pre><code>class Myclass
-  include Myren,Mymodule
-end  
-</code></pre>
-
-<p>   但这么做会有一个问题就是。有时候我们只想引用一个Myren，那就没办法了。那么怎么解决这个问题？Rails里有一个模块可以帮我们解决这个问题。</p>
-
-<p>   例子二：</p>
-
-<pre><code>require 'rubygems'
-require 'active_support/concern'
-module Mymodule
-   extend ActiveSupport::Concern
-   included do  
-     puts self  #Myclass
-   end
-end
-
-module Myren
-  extend ActiveSupport::Concern
-  include Mymodule
-  included do
-    puts self  #Myclass
-  end
-end
-
-class Myclass
-  include Myren
-end
-
-a = Myclass.new
-</code></pre>
-
-<p>   首先引入active_support/concern文件，在两个module中分别加入extend ActiveSupport::Concern，这样两个模块就不要再用自己的callback函数了。而是改成 included do ... end
-   这个模块中的self就是混入类本身了。神奇的是不光为你做了这些，还省了你在一个module中定义实例方法和类方法的技巧。只需要把类方法放在一个名叫：ClassMethods的module里即可，非常的方便。</p>
-
-<p>   例子三：</p>
-
-<pre><code>require 'rubygems'
-require 'active_support/concern'
-module Mymodule
-  extend ActiveSupport::Concern
-  module ClassMethods
-    def say
-      puts "hello"
-    end
-  end
-
-  module InstanceMethods #也可不放把实例方法放在这个module里。
-    def cry
-     puts "wawawa~"    
-    end
-  end
-end
-
-class Myclass
-  include Mymodule
-end
-
-Myclass.say #hello
-Myclass.new.cry #wawawa
-</code></pre>
-
-<p>  在ruby的世界中说是针对类进行逻辑结构的搭建，不如说是针对模块的逻辑结构搭建。大量的逻辑会写在module中，而不是直接写在类的，因为那样的重用性会很差。
-  良好的程序结构就是有不同的module和class在不同的层次上发挥着作用。比如：如果我们打一个别人的类，那想写点类方法，其实是很危险的，很容易就出现猴子补丁的情况。
-  那么干脆新建一个module,然后让那些类方法，成为module的单例方法，就可以类似类方法的调用了。Redis::search::query()</p>
-
-<p>  六、class也有一个callback方法，就是继承后self.inherited方法,如果class被继承就会callback这个方法，如果class的子类再被继承同样也会callback该class这个方法。</p>
-
-<pre><code>class Myclass
-  def self.inherited(subclass)
-    p subclass
-  end
-end
-
-class Mysubclass&lt;Myclass
-end
-
-class Mygrandsonclass&lt;Mysubclass
-end
-</code></pre>
-
-<p>输出：</p>
-
-<pre><code>Mysubclass
-Mygrandsonclass
-</code></pre>
+</span><span class='line'><span class="sr">&lt;p&gt;  end</span>
+</span><span class='line'><span class="sr">  c.hello&lt;/</span><span class="nb">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nb">p</span><span class="o">&gt;</span>  <span class="k">class</span> <span class="nc">Child</span><span class="o">&lt;</span><span class="sr">/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;pre&gt;&lt;code&gt;  undef_method :hello   # prevent any calls to &#39;hello&#39;</span>
+</span><span class='line'><span class="sr">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;</span><span class="sr">/pre&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;p&gt;  end</span>
+</span><span class='line'><span class="sr">  c.hello&lt;/</span><span class="nb">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nb">p</span><span class="o">&gt;</span>  <span class="no">In</span> <span class="n">child</span>
+</span><span class='line'>  <span class="no">In</span> <span class="n">parent</span>
+</span><span class='line'>  <span class="n">prog</span><span class="o">.</span><span class="n">rb</span><span class="p">:</span><span class="mi">23</span><span class="p">:</span> <span class="n">undefined</span> <span class="nb">method</span> <span class="sb">`hello&#39; for #&amp;lt;Child:0x401b3bb4&gt; (NoMethodError)</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+  undef_method与remove_method的用法与define_method是一样的。区别在于，remove_method 只是移除了本类中的方法，但父类的方法还在。对象还是可以调用该方法的。但undef_method就彻底把方法从家族中移除了。</p>
+
+<p>  如何查看有哪些方法呢？</p>
+
+<p>  methods;
+  instance_methods;
+  private_instance_methods;protected_instance_methods;public_instance_methods;</p>
 ]]></content>
   </entry>
   
   <entry>
-    <title type="html"><![CDATA[ruby中的变量]]></title>
-    <link href="http://suzhen.github.com/blog/2012/12/03/rubyvar/"/>
-    <updated>2012-12-03T02:45:00+08:00</updated>
-    <id>http://suzhen.github.com/blog/2012/12/03/rubyvar</id>
-    <content type="html"><![CDATA[<p>ruby上的变量分为局部变量(local variables)，全局变量(global variables)，类的实例变量(class instance variables)，对象的实例变量(object instance variables)和类变量(class variables)。每个变量的
-作用，特性和作用域都有所不同。首先要对这些变量有充分深刻的认识,细细抠它们之间的区别
-，才能在以后的应用中准确的使用。</p>
+    <title type="html"><![CDATA[Ruby之类对象]]></title>
+    <link href="http://suzhen.github.com/blog/2014/02/23/rubyzhi-lei-dui-xiang/"/>
+    <updated>2014-02-23T11:26:00+08:00</updated>
+    <id>http://suzhen.github.com/blog/2014/02/23/rubyzhi-lei-dui-xiang</id>
+    <content type="html"><![CDATA[<p>先熟悉一下类对象。</p>
 
-<p>1、定义变量</p>
+<p>  它有点像是作用在整个类继承层次的 全局变量, 它的行为像是没有命名空间的全局常量, 在 一个类及其所有子类中 总是唯一的. 既然他属于 类和它的子孙 公用的那一部分, 那也必然应该属于类了, @@类变量是私有的, 只能在类定义内部隐式的访问它.</p>
 
-<p> 局部变量直接以小写字母，或者下划线开始，如：</p>
+<p>  @@对象不仅被类族中类方法访问，也可以被类族中的实例对象访问到。</p>
 
-<pre><code>tmp=[]
-_tmp=true
-</code></pre>
-
-<p> 以$开头的变量是全局变量,如：</p>
-
-<pre><code>$config= {:site=&gt;"bizmass.com"}
-</code></pre>
-
-<p> 类的实例变量和对象的实例变量，即实例变量用@开头，如：</p>
-
-<pre><code>@name="suzhen"
-</code></pre>
-
-<p> 类变量用@@开头，如：</p>
-
-<pre><code>@@count=1
-</code></pre>
-
-<p>2、变量的区别和用法</p>
-
-<p>1）局部变量会存在的范围：
- proc{...} <br/>
- lambda do..end
- def...end <br/>
- class...end <br/>
- module...end<br/>
- 局部变量属于所在的作用域，它的生命起始于声明处，结束于该声明所在的块、方法定义、类
-、模块定义的结尾。随着作用域的结束，局部变量的生命也将结束。如果局部变量在生命期内，
-变包含在一个闭包中，它的生命会因为这个闭包在作用域结束的时间得到延续。</p>
-
-<p>2）全局变量会在程序的任何一个地方定义，在不同的类/模块/所在的范围里都可以读取和改变
-。全局变量是唯一的。
-   注意：应谨慎使用全局变量.由于在任何地方都可以被写因此他们相当危险.滥用全局变量会
-导致很难隔离臭虫;同时也视为程序的设计未经严格考虑.当你发现必须要使用全局变量时,记得
-给它一个不会在其它地方一不小心就用到的描述性名字，避免在其它地方变无意修改。</p>
-
-<pre><code>global_variables #查看所有全局变量
-</code></pre>
-
-<p>  全局变量的改变是可以被跟踪的。如果它的值被改变，就会执行一个proc。像是一个触发器。</p>
-
-<pre><code>trace_var :$x,proc{ p "$x is now #{$x}"  }
-
-ruby&gt; $x = 5 
-
-$x is now 5 
-</code></pre>
-
-<p>3）类变量要声明在类定义中，类变量是<strong>类</strong>、<strong>子类</strong>，<strong>类的实例对象</strong>，<strong>子类实例对象</strong>中共
-享的一个变量，即该类整个家族中在类方法中，又可以在实例方法中共享该变量。访类族对类变
-量影响是共同承担的。
-<strong>但是子类中定义的类变量，在父量中是不以被访问到的,类变量是向下共享的.</strong></p>
-
-<p>类变量的作用域就在声明所在类族和类的对象中。不同类族内有相关名字的类变量，但这是不同
-的类变量，只是名称一样罢了,彼此不影响.</p>
-
-<p><strong>注意：要先定义，直接使用异常，在定义一个类变量时，必须要马上赋值。</strong></p>
-
-<pre><code>   <div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<p><div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
 <span class='line-number'>4</span>
@@ -861,285 +932,71 @@ $x is now 5
 <span class='line-number'>14</span>
 <span class='line-number'>15</span>
 <span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">class</span> <span class="nc">Mysuperclass</span>
-</span><span class='line'>  <span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">say</span>
-</span><span class='line'>    <span class="vc">@@a</span>
-</span><span class='line'>  <span class="k">end</span>
-</span><span class='line'><span class="k">end</span>
-</span><span class='line'><span class="k">class</span> <span class="nc">Myclass</span><span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="no">Mysuperclass</span>
-</span><span class='line'>  <span class="vc">@@a</span><span class="o">=</span><span class="s2">&quot;suzhen&quot;</span>
-</span><span class='line'>  <span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">say</span>
-</span><span class='line'>    <span class="vc">@@a</span>
-</span><span class='line'>  <span class="k">end</span>
-</span><span class='line'><span class="k">end</span>
-</span><span class='line'><span class="k">class</span> <span class="nc">Mysubclass</span><span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="no">Myclass</span>
-</span><span class='line'>  <span class="k">def</span> <span class="nf">play</span>
-</span><span class='line'>   <span class="vc">@@a</span>
-</span><span class='line'>  <span class="k">end</span>
-</span><span class='line'><span class="k">end</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'>  <span class="k">class</span> <span class="nc">Dummy</span><span class="o">&lt;</span><span class="sr">/p&gt;</span>
 </span><span class='line'>
+</span><span class='line'><span class="sr">&lt;pre&gt;&lt;code&gt;@@name = &quot;suzhen&quot;</span>
 </span><span class='line'>
-</span><span class='line'><span class="nb">p</span> <span class="no">Myclass</span><span class="o">.</span><span class="n">say</span> <span class="c1">#suzhen</span>
-</span><span class='line'><span class="nb">p</span> <span class="no">Mysubclass</span><span class="o">.</span><span class="n">new</span><span class="o">.</span><span class="n">play</span> <span class="c1">#suzhen</span>
-</span><span class='line'><span class="nb">p</span> <span class="no">Mysuperclass</span><span class="o">.</span><span class="n">say</span> <span class="c1">#报没有申明类变量的错误</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-</code></pre>
-
-<p>这和全局变量不一样。类变量是私有的，在类外无法直接访问，你只能通过实例方法和类方法去
-访问它。</p>
-
-<p>模块中定义的类变量(模块变量)被所有包含该模块的类所共享。</p>
-
-<pre><code>   <div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">module</span> <span class="nn">TestModule</span>
-</span><span class='line'>  <span class="vc">@@foo</span> <span class="o">=</span> <span class="mi">10</span>
-</span><span class='line'><span class="k">end</span>
-</span><span class='line'><span class="k">class</span> <span class="nc">Klass</span>
-</span><span class='line'>  <span class="kp">include</span> <span class="no">Foo</span>
-</span><span class='line'>  <span class="nb">p</span> <span class="vc">@@foo</span> <span class="o">+=</span> <span class="mi">1</span>          <span class="c1"># =&amp;gt; 11</span>
-</span><span class='line'><span class="k">end</span>
-</span><span class='line'><span class="k">class</span> <span class="nc">Base</span>
-</span><span class='line'>  <span class="kp">include</span> <span class="no">Foo</span>
-</span><span class='line'>  <span class="nb">p</span> <span class="vc">@@foo</span> <span class="o">+=</span> <span class="mi">2</span>          <span class="c1"># =&amp;gt; 12</span>
-</span><span class='line'><span class="k">end</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-</code></pre>
-
-<p>但是类变量有一个问题就是在类外面，也是随时可以改变这个变量值的。这是一个危险。
-另一个例子：</p>
-
-<pre><code>    <div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">class</span> <span class="nc">Myclass</span>
-</span><span class='line'>  <span class="vc">@@koko</span><span class="o">=</span><span class="mi">23</span>
-</span><span class='line'>  <span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">pkoko</span>
-</span><span class='line'>    <span class="vc">@@koko</span>
-</span><span class='line'>  <span class="k">end</span>
-</span><span class='line'><span class="k">end</span>
+</span><span class='line'><span class="sr">def self.name</span>
+</span><span class='line'><span class="sr">  @@name</span>
+</span><span class='line'><span class="sr">end</span>
+</span><span class='line'><span class="sr">def name</span>
+</span><span class='line'><span class="sr">  @@name</span>
+</span><span class='line'><span class="sr">end</span>
+</span><span class='line'><span class="sr">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;</span><span class="sr">/pre&gt;</span>
 </span><span class='line'>
-</span><span class='line'><span class="vc">@@koko</span><span class="o">=</span><span class="mi">99</span>
+</span><span class='line'><span class="sr">&lt;p&gt;  end&lt;/</span><span class="nb">p</span><span class="o">&gt;</span>
 </span><span class='line'>
-</span><span class='line'><span class="nb">p</span> <span class="no">Myclass</span><span class="o">.</span><span class="n">pkoko</span> <span class="c1">#99</span>
-</span><span class='line'>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-</code></pre>
-
-<p>同名类变量在类外面是可以一下改变的，比如：在所有类外面@@koko=100,那么所有类族中的同
-名类变量@@koko都会改变。</p>
-
-<p>4）类的实例对象，是类作为对象，所产生的实例对象。深刻理解一切都是对象这句话,就需要把
-类当作一个普通对象去看待。类的实例对象是用来记录只属于该类的一些属性。比如想记录一下
-某个类被实例化了多少次，或者被哪些继承了。我们都可以创建一个类的实例对象来记录这些。
-这就是类的实例对象的用途。
-  在类定义中去声明类的实例变量，而这些类的实例变量只能在类方法中使用。即然类实例变量
-是针对某一个类的，那自然就不可能被子类使用，失去了被继承的价值和意义。因此如果要定义
-需要和子类共享的类全局数据，使用类变量；但是如果要定义仅供类本身使用的类全局数据可以
-使用类实例变量。</p>
-
-<pre><code>   <div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">class</span> <span class="nc">Myclass</span>
-</span><span class='line'>        <span class="vi">@age</span><span class="o">=</span><span class="mi">12</span> <span class="c1">#类实例变量</span>
-</span><span class='line'>    <span class="k">def</span> <span class="nf">say</span>
-</span><span class='line'>        <span class="nb">p</span> <span class="vi">@age</span> <span class="c1">#nil 错误，类的实例变量不能放在实例方法中,会被误认为是对象的实例变量</span>
-</span><span class='line'>    <span class="k">end</span>
-</span><span class='line'>    <span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">cry</span>
-</span><span class='line'>        <span class="nb">p</span> <span class="vi">@age</span> <span class="c1">#12 类的实例变量只能在类方法中使用</span>
-</span><span class='line'>    <span class="k">end</span>
-</span><span class='line'><span class="k">end</span>
-</span><span class='line'><span class="k">class</span> <span class="nc">Mysonclass</span> <span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span> <span class="no">Myclass</span>
-</span><span class='line'>   <span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">meet</span>
-</span><span class='line'>     <span class="nb">p</span> <span class="vi">@age</span> <span class="c1">#nil 错误，父类的类实例变量不能被继承的，会被误认为是当前类的类实例变量</span>
-</span><span class='line'>  <span class="k">end</span>
-</span><span class='line'><span class="k">end</span>
-</span><span class='line'>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-</code></pre>
-
-<p>定义类的实例变量还可以有几种方式：</p>
-
-<p>方式一：</p>
-
-<pre><code>   <div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">class</span> <span class="nc">Myclass</span>
-</span><span class='line'>   <span class="n">class</span><span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="nb">self</span>
-</span><span class='line'>    <span class="kp">attr_accessor</span> <span class="ss">:age</span> <span class="c1">#类的实例变量</span>
-</span><span class='line'>   <span class="k">end</span>
-</span><span class='line'><span class="k">end</span>
-</span><span class='line'>
-</span><span class='line'>
-</span><span class='line'><span class="no">Myclass</span><span class="o">.</span><span class="n">age</span><span class="o">=</span><span class="mi">2</span>
-</span><span class='line'><span class="nb">p</span> <span class="no">Myclass</span><span class="o">.</span><span class="n">age</span> <span class="c1">#2</span>
-</span><span class='line'>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-</code></pre>
-
-<p>方式二：</p>
-
-<pre><code>    <div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="no">Myclass</span><span class="o">.</span><span class="n">class_eval</span> <span class="k">do</span>
-</span><span class='line'>  <span class="kp">attr_accessor</span> <span class="ss">:age</span> <span class="c1">#类的实例变量</span>
-</span><span class='line'>  <span class="c1">#顺便说一句，要搞清楚现在是在一个类的环境中</span>
-</span><span class='line'>  <span class="nb">self</span> <span class="c1">#代表这个类</span>
-</span><span class='line'><span class="k">end</span>
-</span><span class='line'>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-</code></pre>
-
-<p>5）再思考一下对象实例变量，对象实例变量会保存对象中，而实例方法会保存在类中。</p>
-
-<p>它们只能在类的实例方法中被使用，也可以被继承。</p>
-
-<pre><code>   <div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">class</span> <span class="nc">Myclass</span>
-</span><span class='line'>   <span class="kp">attr_accessor</span> <span class="ss">:name</span>
-</span><span class='line'>   <span class="k">def</span> <span class="nf">initialize</span>
-</span><span class='line'>       <span class="vi">@name</span><span class="o">=</span><span class="s2">&quot;suzhen&quot;</span> <span class="c1">#对象实例变量</span>
-</span><span class='line'>   <span class="k">end</span>
-</span><span class='line'>   <span class="k">def</span> <span class="nf">say</span>
-</span><span class='line'>      <span class="nb">p</span> <span class="vi">@name</span> <span class="c1">#suzhen</span>
-</span><span class='line'>   <span class="k">end</span>
-</span><span class='line'>   <span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">cry</span>
-</span><span class='line'>      <span class="nb">p</span> <span class="vi">@name</span> <span class="c1">#nil 错误，对象实例变量不能放在类方法中，会被识认为是类的实例变量</span>
-</span><span class='line'>   <span class="k">end</span>
-</span><span class='line'><span class="k">end</span>
-</span><span class='line'>
-</span><span class='line'>
-</span><span class='line'><span class="k">class</span> <span class="nc">Mysonclass</span> <span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span> <span class="no">Myclass</span>
-</span><span class='line'>   <span class="k">def</span> <span class="nf">talk</span>
-</span><span class='line'>     <span class="nb">p</span> <span class="vi">@name</span> <span class="c1">#suzhen 父类的对象实例变量是可以被继承的</span>
-</span><span class='line'>   <span class="k">end</span>
-</span><span class='line'><span class="k">end</span>
-</span><span class='line'>
-</span><span class='line'>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-</code></pre>
-
-<p>如果我们不在定义类的时候定义好这些实例变量，也可以在之后的编程过程中去创建这些实例变
-量。在对象里加的实例变量就是对象实例变量，在类里加的实例变量就是类的实例变量。</p>
-
-<pre><code>    <div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="no">Myclass</span><span class="o">.</span><span class="n">instance_variable_defined?</span><span class="p">(</span><span class="s2">&quot;@age&quot;</span><span class="p">)</span>   <span class="c1">#true</span>
-</span><span class='line'><span class="n">obj</span><span class="o">.</span><span class="n">instance_variable_defined?</span><span class="p">(</span><span class="s2">&quot;@name&quot;</span><span class="p">)</span>   <span class="c1">#true</span>
-</span><span class='line'>
-</span><span class='line'><span class="no">Myclass</span><span class="o">.</span><span class="n">instance_variable_set</span><span class="p">(</span><span class="s2">&quot;@age&quot;</span><span class="p">,</span> <span class="mi">23</span><span class="p">)</span>
-</span><span class='line'><span class="no">Myclass</span><span class="o">.</span><span class="n">instance_variable_get</span><span class="p">(</span><span class="s2">&quot;@age&quot;</span><span class="p">)</span>
-</span><span class='line'>
-</span><span class='line'><span class="n">obj</span><span class="o">.</span><span class="n">instance_variable_set</span><span class="p">(</span><span class="s2">&quot;@name&quot;</span><span class="p">,</span> <span class="s2">&quot;even&quot;</span><span class="p">)</span>
-</span><span class='line'><span class="n">obj</span><span class="o">.</span><span class="n">instance_variable_get</span><span class="p">(</span><span class="s2">&quot;@name&quot;</span><span class="p">)</span>
-</span><span class='line'>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-</code></pre>
-
-<p>其实Myclass.instance_eval也可以实现，但我不喜欢这种方式，会容易搞混。</p>
-
-<p>问题：
-类变量和类实例变量有什么区别？
-http://snippets.aktagon.com/snippets/299-class-variables-vs-class-instance-variables-in-ruby
-http://www.railstips.org/blog/archives/2006/11/18/class-and-instance-variables-in-ruby/</p>
-
-<p>6)宏
-attr_accessor,attr_reader,attr_writer都是创建实例变量(类实例变量,对象实例变量)
-<div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">class</span> <span class="nc">Myclass</span>
-</span><span class='line'>  <span class="kp">attr_accessor</span> <span class="ss">:age</span>  <span class="c1">#创建对象实例变量                                                                                                                                    &lt;br/&gt;</span>
-</span><span class='line'><span class="k">end</span><span class="o">&lt;</span><span class="sr">/p&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="sr">&lt;p&gt;obj = Myclass.new</span>
-</span><span class='line'><span class="sr">obj.age=1</span>
-</span><span class='line'><span class="sr">p obj.age #1                                                                                                                                                               &lt;br/</span><span class="o">&gt;</span>
-</span><span class='line'><span class="n">obj</span><span class="o">.</span><span class="n">instance_eval</span> <span class="p">{</span> <span class="n">class</span><span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="nb">self</span><span class="p">;</span> <span class="kp">attr_accessor</span> <span class="ss">:name</span><span class="p">;</span><span class="k">end</span> <span class="p">}</span>
-</span><span class='line'><span class="n">obj</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span><span class="mi">1</span>
-</span><span class='line'><span class="nb">p</span> <span class="n">obj</span><span class="o">.</span><span class="n">name</span> <span class="c1">#1</span>
+</span><span class='line'><span class="o">&lt;</span><span class="nb">p</span><span class="o">&gt;</span>  <span class="nb">p</span> <span class="no">Dummy</span><span class="o">.</span><span class="n">name</span>    <span class="c1"># suzhen</span>
+</span><span class='line'>  <span class="nb">p</span> <span class="no">Dummy</span><span class="o">.</span><span class="n">new</span><span class="o">.</span><span class="n">name</span>  <span class="c1">#suzhen</span>
 </span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>  active_support中对这种类对象有很好的封装。看下面代码：</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'>  <span class="nb">require</span> <span class="s2">&quot;active_support/all&quot;</span><span class="o">&lt;</span><span class="sr">/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;p&gt;  class Dummy&lt;/</span><span class="nb">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">pre</span><span class="o">&gt;&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="n">mattr_accessor</span> <span class="ss">:name</span>
+</span><span class='line'><span class="o">&lt;</span><span class="sr">/code&gt;&lt;/</span><span class="n">pre</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nb">p</span><span class="o">&gt;</span>  <span class="k">end</span><span class="o">&lt;</span><span class="sr">/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;p&gt;  Dummy.name = &quot;suzhen&quot;&lt;/</span><span class="nb">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nb">p</span><span class="o">&gt;</span>  <span class="nb">p</span> <span class="no">Dummy</span><span class="o">.</span><span class="n">name</span> <span class="c1">#suzhen</span>
+</span><span class='line'>  <span class="nb">p</span> <span class="no">Dummy</span><span class="o">.</span><span class="n">new</span><span class="o">.</span><span class="n">name</span>  <span class="c1">#suzhen&lt;/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nb">p</span><span class="o">&gt;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>  mattr_accessor 就是帮我们创建了一组类方法和一组实例方法</p>
+
+<p>  有的时候，我们只想给出类方法的访问，而不想给出实例方法的访问。</p>
+
+<p>  mattr_accessor :name,:instance_accessor=>false</p>
+
+<p>  至于mattr_accessor 是如何实现的，可以看rails的代码。</p>
+
+<p>  https://github.com/rails/rails/blob/master/activesupport/lib/active_support/core_ext/module/attribute_accessors.rb</p>
+
+<p>  mattr_accessor 与 cattr_accessor 是一样的。</p>
+
+<p>  我们看下面的例子：</p>
 
 <p><div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
@@ -1161,121 +1018,101 @@ attr_accessor,attr_reader,attr_writer都是创建实例变量(类实例变量,�
 <span class='line-number'>18</span>
 <span class='line-number'>19</span>
 <span class='line-number'>20</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="o">&lt;</span><span class="sr">/p&gt;</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'> <span class="o">&lt;</span><span class="n">br</span><span class="o">/&gt;</span>
+</span><span class='line'>  <span class="k">module</span> <span class="nn">SomeModule</span><span class="o">&lt;</span><span class="sr">/p&gt;</span>
 </span><span class='line'>
-</span><span class='line'><span class="sr">&lt;p&gt;class Myclass</span>
-</span><span class='line'><span class="sr">  class &amp;lt;&amp;lt; self&lt;/</span><span class="nb">p</span><span class="o">&gt;</span>
+</span><span class='line'><span class="sr">&lt;pre&gt;&lt;code&gt;@@logger = &quot;suzhen&quot;</span>
+</span><span class='line'><span class="sr">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;</span><span class="sr">/pre&gt;</span>
 </span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="n">pre</span><span class="o">&gt;&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="kp">attr_accessor</span> <span class="ss">:count</span>  <span class="c1">#创建类实例变量</span>
-</span><span class='line'><span class="o">&lt;</span><span class="sr">/code&gt;&lt;/</span><span class="n">pre</span><span class="o">&gt;</span>
+</span><span class='line'><span class="sr">&lt;p&gt;  end&lt;/</span><span class="nb">p</span><span class="o">&gt;</span>
 </span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="nb">p</span><span class="o">&gt;</span> <span class="k">end</span>
-</span><span class='line'><span class="k">end</span><span class="o">&lt;</span><span class="sr">/p&gt;</span>
+</span><span class='line'><span class="o">&lt;</span><span class="nb">p</span><span class="o">&gt;</span>  <span class="k">class</span> <span class="nc">Dummy</span><span class="o">&lt;</span><span class="sr">/p&gt;</span>
 </span><span class='line'>
-</span><span class='line'><span class="sr">&lt;p&gt;Myclass.count=1</span>
-</span><span class='line'><span class="sr">p Myclass.count  #1&lt;/</span><span class="nb">p</span><span class="o">&gt;</span>
+</span><span class='line'><span class="sr">&lt;pre&gt;&lt;code&gt;include SomeModule</span>
 </span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="nb">p</span><span class="o">&gt;</span><span class="no">Myclass</span><span class="o">.</span><span class="n">class_eval</span> <span class="p">{</span>  <span class="n">class</span><span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="nb">self</span><span class="p">;</span> <span class="kp">attr_accessor</span> <span class="ss">:sum</span><span class="p">;</span><span class="k">end</span> <span class="p">}</span><span class="o">&lt;</span><span class="sr">/p&gt;</span>
+</span><span class='line'><span class="sr">def self.say</span>
+</span><span class='line'><span class="sr">  @@logger</span>
+</span><span class='line'><span class="sr">end</span>
+</span><span class='line'><span class="sr">def say</span>
+</span><span class='line'><span class="sr">  @@logger</span>
+</span><span class='line'><span class="sr">end</span>
+</span><span class='line'><span class="sr">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;</span><span class="sr">/pre&gt;</span>
 </span><span class='line'>
-</span><span class='line'><span class="sr">&lt;p&gt;Myclass.sum=1</span>
-</span><span class='line'><span class="sr">p Myclass.sum  #1&lt;/</span><span class="nb">p</span><span class="o">&gt;</span>
+</span><span class='line'><span class="sr">&lt;p&gt;  end&lt;/</span><span class="nb">p</span><span class="o">&gt;</span>
 </span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="nb">p</span><span class="o">&gt;</span>
+</span><span class='line'><span class="o">&lt;</span><span class="nb">p</span><span class="o">&gt;</span>  <span class="nb">p</span> <span class="no">Dummy</span><span class="o">.</span><span class="n">say</span>   <span class="err">＃</span><span class="n">suzhen</span>
+</span><span class='line'>  <span class="nb">p</span> <span class="no">Dummy</span><span class="o">.</span><span class="n">new</span><span class="o">.</span><span class="n">say</span> <span class="c1">#suzhen</span>
 </span></code></pre></td></tr></table></div></figure></notextile></div></p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[require/load/autoload的区别和用法]]></title>
-    <link href="http://suzhen.github.com/blog/2012/12/03/importfile/"/>
-    <updated>2012-12-03T01:34:00+08:00</updated>
-    <id>http://suzhen.github.com/blog/2012/12/03/importfile</id>
-    <content type="html"><![CDATA[<p>首先我们建两个目录，一个命名rubylib，目录下有一个lib.rb文件，另一个目录命名rubyconfig,目录下有一个cfg.rb文件。</p>
 
-<p>lib.rb</p>
+<p>  当一个class引入一个module就是这个class就继承了这个module,那么module中定义的类变量，就可以在这上类家庭中使用了。</p>
 
-<pre><code><div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="nb">puts</span> <span class="s2">&quot;I&#39;m lib&quot;</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-</code></pre>
-
-<p>cfg.rb</p>
-
-<pre><code><div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="nb">puts</span> <span class="s2">&quot;I&#39;m config&quot;</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-</code></pre>
-
-<p>再建立一个testrequire.rb文件</p>
-
-<pre><code><div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="nb">require</span> <span class="s2">&quot;./rubylib/lib&quot;</span>
-</span><span class='line'><span class="nb">puts</span> <span class="s2">&quot;hello,world&quot;</span>
-</span><span class='line'><span class="nb">require</span> <span class="s2">&quot;./rubylib/lib&quot;</span> <span class="c1">#遇到相同的文件，不再加载</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-</code></pre>
-
-<p>输出结果</p>
-
-<pre><code>I'm lib
-hello,world
-</code></pre>
-
-<p>再建立一个testload.rb文件</p>
-
-<pre><code><div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="nb">load</span> <span class="s2">&quot;./rubyconfig/cfg.rb&quot;</span>
-</span><span class='line'><span class="nb">puts</span> <span class="s2">&quot;hello,world&quot;</span>
-</span><span class='line'><span class="nb">load</span> <span class="s2">&quot;./rubyconfig/cfg.rb&quot;</span> <span class="c1">#无论是否加载过，都会加载</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-</code></pre>
-
-<p>输出结果</p>
-
-<pre><code>I'm config
-hello,world
-I'm config
-</code></pre>
-
-<p>说明：require和load同样都是用来加载文件。require的加载路径可以不写.rb,但是load就一定要写全文件名。require是只加载一次，如果有相同的文件，已经加载，则不再重复加载，用于加载库文件;而load是每次都会加载，无论是否已经加载过，常用于加载配置文件。
-<strong>require和load都表现为立即加载文件。而autoload则是使用到某个类时，才会去加载必要的文件。</strong></p>
-
-<p>建立一个mylib.rb的文件</p>
-
-<pre><code><div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<p><div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
 <span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="nb">puts</span> <span class="s2">&quot;I was loaded!&quot;</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'>  <span class="k">module</span> <span class="nn">SomeModule</span><span class="o">&lt;</span><span class="sr">/p&gt;</span>
 </span><span class='line'>
-</span><span class='line'><span class="k">class</span> <span class="nc">MyLibrary</span>
-</span><span class='line'><span class="k">end</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-</code></pre>
+</span><span class='line'><span class="sr">&lt;pre&gt;&lt;code&gt;mattr_accessor :logger</span>
+</span><span class='line'><span class="sr">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;</span><span class="sr">/pre&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;p&gt;  end&lt;/</span><span class="nb">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nb">p</span><span class="o">&gt;</span>  <span class="k">class</span> <span class="nc">Dummy</span><span class="o">&lt;</span><span class="sr">/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;pre&gt;&lt;code&gt;include SomeModule</span>
+</span><span class='line'><span class="sr">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;</span><span class="sr">/pre&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;p&gt;  end&lt;/</span><span class="nb">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nb">p</span><span class="o">&gt;</span>  <span class="nb">p</span> <span class="no">Dummy</span><span class="o">.</span><span class="n">new</span><span class="o">.</span><span class="n">logger</span>  <span class="err">＃</span><span class="n">suzhen</span><span class="o">&lt;</span><span class="sr">/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;p&gt;  p Dummy.logger  #error</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
-<p>使用require加载会立即加载</p>
+<p>  但是上面这个例子中，mattr_accessor 把类方法 self.logger 和self.logger=定义在了module中，include自然不会引用这种类方法。但实例方法是可以用的。</p>
 
-<pre><code>irb(main):001:0&gt; require 'mylibrary'
-I was loaded!
-=&gt; true
-</code></pre>
+<p><div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'>  <span class="k">module</span> <span class="nn">SomeMoudle</span><span class="o">&lt;</span><span class="sr">/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;pre&gt;&lt;code&gt;def self.included(base)</span>
+</span><span class='line'><span class="sr">  base.class_eval do</span>
+</span><span class='line'><span class="sr">    mattr_accessor :logger</span>
+</span><span class='line'><span class="sr">    self.logger = &quot;suzhen&quot;   #初始化的时候一定把self加上。显示的调用。</span>
+</span><span class='line'><span class="sr">  end</span>
+</span><span class='line'><span class="sr">end</span>
+</span><span class='line'><span class="sr">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;</span><span class="sr">/pre&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;p&gt;  end</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
-<p>使用autoload只会在这个类被需要的时候，才去加载</p>
-
-<pre><code>irb(main):001:0&gt; autoload :MyLibrary, 'mylibrary'
-=&gt; nil
-irb(main):002:0&gt; MyLibrary.new
-I was loaded!
-=&gt; #&lt;MyLibrary:0x0b1jef&gt;
-</code></pre>
-
-<p>autoload不会被重复加载!</p>
-
-<p>如果有一些类或者模块一定会被用上，则使用require，如果不一定会被使用，才使用autoload。</p>
+<p>  用以上这种方法自然可以解决这个问题。</p>
 ]]></content>
   </entry>
   

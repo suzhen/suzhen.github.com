@@ -1,0 +1,415 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>RUBY魔法师(掏心篇) - 雨辰不语</title>
+  <meta name="author" content="suzhen">
+
+  
+  <meta name="description" content="ruby也有一些黑魔法，用的好，可以事半功倍，但是也存在着很大的风险。今天要讲的是打破一层一层的封装，跳过常规的读写方式，直接从object里获取或者设置instanc variable 的方法。 首先我们可以先了解 实例对象 ，类的实例对象， 类对象 三个概念。 施展两组黑魔法。 &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://suzhen.github.com/blog/2014/03/06/rubymo-fa-shi-tao-xin-pian/">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="雨辰不语" type="application/atom+xml">
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">雨辰不语</a></h1>
+  
+    <h2>记录学习中的点点滴滴</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:suzhen.github.com" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">RUBY魔法师(掏心篇)</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-03-06T16:06:00+08:00" pubdate data-updated="true">Mar 6<span>th</span>, 2014</time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>ruby也有一些黑魔法，用的好，可以事半功倍，但是也存在着很大的风险。今天要讲的是打破一层一层的封装，跳过常规的读写方式，直接从object里获取或者设置instanc variable 的方法。</p>
+
+<p>  首先我们可以先了解 实例对象 ，类的实例对象， 类对象 三个概念。</p>
+
+<p>  施展两组黑魔法。</p>
+
+<p>   instance_variable_get 与  instance_variable_set</p>
+
+<p>   直接对一个对象或者类里面，获取和设置某个实例对象。注意在 获取和设置obj的实例对象的时候，要先确保obj的实例对象已经产生了。</p>
+
+<p>  class_variable_get 与 class_variable_set</p>
+
+<p>  直接对一个类，获取和设置类对象。</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'>
+</span><span class='line'>  <span class="k">class</span> <span class="nc">G</span>
+</span><span class='line'>    <span class="vc">@@class_variable</span> <span class="o">=</span> <span class="mi">33</span>
+</span><span class='line'>    <span class="vi">@class_instance_variable</span> <span class="o">=</span> <span class="mi">55</span>
+</span><span class='line'>    <span class="k">def</span> <span class="nf">initialize</span>
+</span><span class='line'>      <span class="vi">@instance_variable_1</span> <span class="o">||=</span> <span class="mi">44</span>
+</span><span class='line'>    <span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">def</span> <span class="nf">build_var2</span>
+</span><span class='line'>      <span class="vi">@instance_variable_2</span> <span class="o">=</span> <span class="mi">22</span>
+</span><span class='line'>    <span class="k">end</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="n">g</span> <span class="o">=</span> <span class="n">G</span><span class="o">.</span><span class="n">new</span><span class="p">()</span>
+</span><span class='line'>  <span class="n">g</span><span class="o">.</span><span class="n">build_var2</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="nb">p</span>  <span class="n">g</span><span class="o">.</span><span class="n">instance_variable_get</span><span class="p">(</span><span class="s2">&quot;@instance_variable_1&quot;</span><span class="p">)</span> <span class="c1">#=&gt; 44</span>
+</span><span class='line'>  <span class="nb">p</span> <span class="n">G</span><span class="o">.</span><span class="n">class_variable_get</span><span class="p">(</span><span class="ss">:@@class_variable</span><span class="p">)</span>  <span class="c1">#=&gt; 33</span>
+</span><span class='line'>  <span class="nb">p</span> <span class="n">G</span><span class="o">.</span><span class="n">instance_variable_get</span><span class="p">(</span><span class="ss">:@class_instance_variable</span><span class="p">)</span>  <span class="c1">#=&gt; 55</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>  注意这两组黑魔法的argument可以有种形式，一种是string，一种是sym。string就意味着可以拼接一个参数。</p>
+
+<p>  这两组黑魔法，都是打破了OO的封闭。这样的好处是很直接就可以操作一个对象的核心的变量，如果这些变量并没有提供对外存取的method。但要注意到普通对象的实例变量是惰性的，不会在定义中就生成，只能在运行中产生实例变量。</p>
+
+<p>  那我们想知道运行中对象都产生了哪些实例对象呢?</p>
+
+<p>  p g.instance_variables  #=>[:@instance_variable_1,:@instance_variable_2]</p>
+
+<p>  或者都我们在存取实例对象的时候，先判断一下这个instance variable是否已经生成。</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'>
+</span><span class='line'>   <span class="n">g</span> <span class="o">=</span> <span class="n">G</span><span class="o">.</span><span class="n">new</span><span class="p">()</span>
+</span><span class='line'>   <span class="nb">p</span> <span class="n">g</span><span class="o">.</span><span class="n">instance_variable_defined?</span><span class="p">(</span><span class="ss">:@instance_variable_1</span><span class="p">)</span> <span class="c1">#=&gt; true</span>
+</span><span class='line'>   <span class="nb">p</span> <span class="n">g</span><span class="o">.</span><span class="n">instance_variable_defined?</span><span class="p">(</span><span class="ss">:@instance_variable_2</span><span class="p">)</span> <span class="c1">#=&gt; false</span>
+</span><span class='line'>   <span class="n">g</span><span class="o">.</span><span class="n">build_var2</span>
+</span><span class='line'>   <span class="nb">p</span> <span class="n">g</span><span class="o">.</span><span class="n">instance_variable_defined?</span><span class="p">(</span><span class="ss">:@instance_variable_2</span><span class="p">)</span> <span class="c1">#=&gt; true</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>   魔法使用场景： 我们发现以上说的黑魔法都是public的,。那么instance_variable_get/set同样可以在类内部使用。但是instance_variable在method之间是可以自由获取和设置的。为什么还会用的到instance_variable_get/set呢?</p>
+
+<p>  看如下的例子：</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'>
+</span><span class='line'>  <span class="k">class</span> <span class="nc">Volume</span>
+</span><span class='line'>    <span class="no">ATTRIBUTES</span> <span class="o">=</span> <span class="o">[</span>
+</span><span class='line'>      <span class="ss">:name</span><span class="p">,</span> <span class="ss">:size</span><span class="p">,</span> <span class="ss">:type</span><span class="p">,</span> <span class="ss">:owner</span><span class="p">,</span> <span class="ss">:date_created</span><span class="p">,</span> <span class="ss">:date_modified</span><span class="p">,</span>
+</span><span class='line'>      <span class="ss">:iscsi_target</span><span class="p">,</span> <span class="ss">:iscsi_portal</span>
+</span><span class='line'>    <span class="o">].</span><span class="n">freeze</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="no">ATTRIBUTES</span><span class="o">.</span><span class="n">each</span> <span class="k">do</span> <span class="o">|</span><span class="kp">attr</span><span class="o">|</span>
+</span><span class='line'>      <span class="kp">attr_accessor</span> <span class="kp">attr</span>
+</span><span class='line'>    <span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="no">SYSTEM</span> <span class="o">=</span> <span class="mi">0</span>
+</span><span class='line'>    <span class="no">DATA</span> <span class="o">=</span> <span class="mi">1</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="no">DEFAULTS</span> <span class="o">=</span> <span class="p">{</span>
+</span><span class='line'>      <span class="ss">:type</span> <span class="o">=&gt;</span> <span class="no">SYSTEM</span>
+</span><span class='line'>    <span class="p">}</span><span class="o">.</span><span class="n">freeze</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="n">args</span> <span class="o">=</span> <span class="kp">nil</span><span class="p">)</span>
+</span><span class='line'>      <span class="c1"># EDIT</span>
+</span><span class='line'>      <span class="c1"># args = args ? DEFAULTS : DEFAULTS.merge(args) # Original</span>
+</span><span class='line'>      <span class="n">args</span> <span class="o">=</span> <span class="n">args</span> <span class="p">?</span> <span class="no">DEFAULTS</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="p">:</span> <span class="no">DEFAULTS</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="no">ATTRIBUTES</span><span class="o">.</span><span class="n">each</span> <span class="k">do</span> <span class="o">|</span><span class="kp">attr</span><span class="o">|</span>
+</span><span class='line'>        <span class="k">if</span> <span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">key?</span><span class="p">(</span><span class="kp">attr</span><span class="p">))</span>
+</span><span class='line'>            <span class="nb">instance_variable_set</span><span class="p">(</span><span class="s2">&quot;@</span><span class="si">#{</span><span class="kp">attr</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">args</span><span class="o">[</span><span class="kp">attr</span><span class="o">]</span><span class="p">)</span>
+</span><span class='line'>        <span class="err">＃</span><span class="nb">instance_variable_set</span><span class="err">的</span><span class="n">argument</span><span class="err">是可以用</span><span class="n">string</span><span class="err">拼接的，就有了很大的灵活性。这样也就行成了元编程。否则就要</span><span class="vi">@name</span> <span class="o">=</span> <span class="n">args</span><span class="o">[</span><span class="ss">:name</span><span class="o">]</span><span class="p">;</span><span class="vi">@size</span><span class="o">=</span><span class="n">args</span><span class="o">[</span><span class="ss">:size</span><span class="o">]</span><span class="err">…</span> <span class="err">我们也可以用</span><span class="nb">__send__</span><span class="err">方法来解决。</span>
+</span><span class='line'>          <span class="c1"># self.__send__ &quot;#{attr}=&quot;,args[attr]</span>
+</span><span class='line'>        <span class="k">end</span>
+</span><span class='line'>      <span class="k">end</span>
+</span><span class='line'>    <span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">def</span> <span class="nf">inspect</span>
+</span><span class='line'>      <span class="no">ATTRIBUTES</span><span class="o">.</span><span class="n">inject</span><span class="p">({</span> <span class="p">})</span> <span class="k">do</span> <span class="o">|</span><span class="n">h</span><span class="p">,</span> <span class="kp">attr</span><span class="o">|</span>
+</span><span class='line'>        <span class="n">h</span><span class="o">[</span><span class="kp">attr</span><span class="o">]</span> <span class="o">=</span> <span class="nb">instance_variable_get</span><span class="p">(</span><span class="s2">&quot;@</span><span class="si">#{</span><span class="kp">attr</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</span><span class='line'>        <span class="n">h</span>
+</span><span class='line'>      <span class="k">end</span>
+</span><span class='line'>    <span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">def</span> <span class="nf">to_json</span>
+</span><span class='line'>      <span class="nb">self</span><span class="o">.</span><span class="n">inspect</span><span class="o">.</span><span class="n">to_json</span>
+</span><span class='line'>    <span class="k">end</span>
+</span><span class='line'>  <span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>  在类的内也有针对instance variable的操作。</p>
+
+<p>  移除实例变量的方法：remove_instance_variable 这个方法是private</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'>
+</span><span class='line'>  <span class="k">class</span> <span class="nc">Dummy</span>
+</span><span class='line'>    <span class="kp">attr_reader</span> <span class="ss">:var</span>
+</span><span class='line'>    <span class="k">def</span> <span class="nf">initialize</span>
+</span><span class='line'>      <span class="vi">@var</span> <span class="o">=</span> <span class="mi">99</span>
+</span><span class='line'>    <span class="k">end</span>
+</span><span class='line'>    <span class="k">def</span> <span class="nf">remove</span>
+</span><span class='line'>      <span class="n">remove_instance_variable</span><span class="p">(</span><span class="ss">:@var</span><span class="p">)</span>
+</span><span class='line'>    <span class="k">end</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'>  <span class="n">d</span> <span class="o">=</span> <span class="no">Dummy</span><span class="o">.</span><span class="n">new</span>
+</span><span class='line'>  <span class="n">d</span><span class="o">.</span><span class="n">var</span>      <span class="c1">#=&gt; 99</span>
+</span><span class='line'>  <span class="n">d</span><span class="o">.</span><span class="n">remove</span>   <span class="c1">#=&gt; 99</span>
+</span><span class='line'>  <span class="n">d</span><span class="o">.</span><span class="n">var</span>      <span class="c1">#=&gt; nil</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">suzhen</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-03-06T16:06:00+08:00" pubdate data-updated="true">Mar 6<span>th</span>, 2014</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/ruby/'>ruby</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2014/03/06/rubydong-tai-diao-yong-fang-fa/" title="Previous Post: RUBY动态调用方法">&laquo; RUBY动态调用方法</a>
+      
+      
+        <a class="basic-alignment right" href="/blog/2014/03/06/shen-qi-de-hash/" title="Next Post: 神奇的HASH">神奇的HASH &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2014/03/06/shen-qi-de-hash/">神奇的HASH</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/03/06/rubymo-fa-shi-tao-xin-pian/">RUBY魔法师(掏心篇)</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/03/06/rubydong-tai-diao-yong-fang-fa/">RUBY动态调用方法</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/03/06/javascriptgao-jie-zhi-arguments/">Javascript高阶之arguments</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/03/06/activemodelyu-activerecrodde-xuan-ze/">ActiveModel与ActiveRecrod的选择</a>
+      </li>
+    
+  </ul>
+</section>
+
+
+
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2014 - suzhen -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>
