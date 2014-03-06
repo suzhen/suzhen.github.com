@@ -9,7 +9,10 @@
   <meta name="author" content="suzhen">
 
   
-  <meta name="description" content="Class与Module是ruby程序大框架的基本构成。掌握好class与module的设计，对ruby程序的层次的清晰和扩展是非常重要的。class名与module名也都是常量。和我们定义的常量在某种意义上说没有区别。第一个字母都必须是大写。Class类是Module的子类， &hellip;">
+  <meta name="description" content="1) 在程序中经常看见“__FILE__”（注意是左边两个下划线，右边两下划线）,这代
+表“__FILE__”所在文件的文件名。如果“__FILE__”是在require或者load的文件中，则是代
+表被包含文件的绝对路径和文件名。 a.rb文件: 1
+2 p __FILE__ b.rb文件 1 &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -64,6 +67,70 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2012/12/13/ruby-shard/">点滴知识积累</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-12-13T02:09:00+08:00" pubdate data-updated="true">Dec 13<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>1) 在程序中经常看见“<strong>__FILE__</strong>”（注意是左边两个下划线，右边两下划线）,这代
+表“<strong>__FILE__</strong>”所在文件的文件名。如果“<strong>__FILE__</strong>”是在require或者load的文件中，则是代
+表被包含文件的绝对路径和文件名。</p>
+
+<p>a.rb文件:</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'> <span class="nb">p</span> <span class="bp">__FILE__</span>
+</span><span class='line'>  
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>b.rb文件</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'> <span class="nb">require</span> <span class="s2">&quot;./a&quot;</span>
+</span><span class='line'>  <span class="nb">p</span> <span class="bp">__FILE__</span>
+</span><span class='line'>  
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>执行ruby b.rb,输出：</p>
+
+<pre><code>/home/suzhen/workspace/a.rb
+b.rb 
+</code></pre>
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -1329,6 +1396,10 @@ rake deploy命令了。</p>
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2014/03/06/activemodelyu-activerecrodde-xuan-ze/">ActiveModel与ActiveRecrod的选择</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2014/02/23/rubymo-fa-shi-%28fang-fa-gao-ji-pian-%29/">RUBY魔法师（方法高级篇）</a>
       </li>
     
@@ -1342,10 +1413,6 @@ rake deploy命令了。</p>
     
       <li class="post">
         <a href="/blog/2014/02/23/rubymo-fa-shi-chu-shi-hua-dui-xiang/">RUBY魔法师(初始化对象)</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2014/02/23/rubyji-cheng-initializeshi-de-shun-xu/">RUBY继承initialize时的顺序</a>
       </li>
     
   </ul>

@@ -4,7 +4,7 @@
   <title><![CDATA[雨辰不语]]></title>
   <link href="http://suzhen.github.com/atom.xml" rel="self"/>
   <link href="http://suzhen.github.com/"/>
-  <updated>2014-02-23T12:17:09+08:00</updated>
+  <updated>2014-03-06T15:44:14+08:00</updated>
   <id>http://suzhen.github.com/</id>
   <author>
     <name><![CDATA[suzhen]]></name>
@@ -12,6 +12,148 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[ActiveModel与ActiveRecrod的选择]]></title>
+    <link href="http://suzhen.github.com/blog/2014/03/06/activemodelyu-activerecrodde-xuan-ze/"/>
+    <updated>2014-03-06T15:41:00+08:00</updated>
+    <id>http://suzhen.github.com/blog/2014/03/06/activemodelyu-activerecrodde-xuan-ze</id>
+    <content type="html"><![CDATA[<p>如果我们有一个类，继承了ActiveRecord::Base，那么意味着这是一个用来做model的类。它具有了把数据存入数据库的能力。除此之外还拥有了关于验证（Validations）的类方法，关于转化（Conversion）的实例方法，关于命名（Naming）的类方法等等。
+  但其实，除了把数据存入数据库的能力，是ActiveRcord提供的。其它的功能都是ActiveModel完成的。只是ActiveRecord有了对ActiveModel的依赖。
+  换句话说，如果我们不准备把数据存入库，但还是希望这个类，像个model一样的工作。那么直接混入ActiveModel就可以了。</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'>
+</span><span class='line'>  <span class="k">class</span> <span class="nc">Person</span>
+</span><span class='line'>  <span class="kp">attr_accessor</span> <span class="ss">:name</span><span class="p">,</span><span class="ss">:age</span>
+</span><span class='line'>      <span class="kp">include</span> <span class="no">ActiveModel</span><span class="o">::</span><span class="no">Model</span>
+</span><span class='line'>  <span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>  那么Person的对象不再有save,update,Person类也不再有all,find,where等与数据保存，修改，查询，删除等一切方法。
+  但具有了以下方法：
+  to_model, to_key, to_param, persisted?
+  model_name 以及 model_name.human, model_name.partial_path, model_name.singular, model_name.plural
+  valid?, errors 以及 errors[], errors.full_messages</p>
+
+<p>  但Person依然能像一般model类一样，实例化一个对象。</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'>
+</span><span class='line'>  <span class="nb">p</span> <span class="o">=</span> <span class="no">Person</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="ss">:name</span><span class="o">=&gt;</span> <span class="s2">&quot;suzhen&quot;</span><span class="p">,</span> <span class="ss">:age</span><span class="o">=&gt;</span><span class="mi">18</span><span class="p">)</span>
+</span><span class='line'>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>  但遗憾的是这种用法只能在rails4.0及以上使用。rails3的版本只能分别引入ActiveModel的各module.</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'>
+</span><span class='line'>  <span class="k">class</span> <span class="nc">Person</span>
+</span><span class='line'>    <span class="kp">attr_accessor</span> <span class="ss">:name</span><span class="p">,</span><span class="ss">:age</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="kp">include</span> <span class="no">ActiveModel</span><span class="o">::</span><span class="no">Validations</span> <span class="c1">#混入验证功能</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="kp">include</span> <span class="no">ActiveModel</span><span class="o">::</span><span class="no">Conversion</span> <span class="err">＃混入转化功能</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="kp">extend</span>  <span class="no">ActiveModel</span><span class="o">::</span><span class="no">Naming</span> <span class="err">＃混入命名功能</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="err">…</span> <span class="err">…</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>  <span class="nb">p</span> <span class="o">=</span> <span class="no">Person</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="ss">:name</span><span class="o">=&gt;</span> <span class="s2">&quot;suzhen&quot;</span><span class="p">,</span> <span class="ss">:age</span><span class="o">=&gt;</span><span class="mi">18</span><span class="p">)</span> <span class="err">＃这样会报错</span> <span class="no">ArgumentError</span><span class="p">:</span> <span class="n">wrong</span> <span class="n">number</span> <span class="n">of</span> <span class="n">arguments</span><span class="p">(</span><span class="mi">1</span> <span class="k">for</span> <span class="mi">0</span><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>  如果想像model那样的可以把参数传入就需要，重写initialize即可：</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'>
+</span><span class='line'>  <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="n">attributes</span> <span class="o">=</span> <span class="p">{})</span>
+</span><span class='line'>    <span class="c1">#元编程再次发威</span>
+</span><span class='line'>        <span class="n">attributes</span><span class="o">.</span><span class="n">each</span> <span class="k">do</span> <span class="o">|</span><span class="nb">name</span><span class="p">,</span> <span class="n">value</span><span class="o">|</span>
+</span><span class='line'>            <span class="nb">send</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">#{</span><span class="nb">name</span><span class="si">}</span><span class="s2">=&quot;</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+</span><span class='line'>        <span class="k">end</span>
+</span><span class='line'>    <span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>  完整code如下：</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'>
+</span><span class='line'>  <span class="k">class</span> <span class="nc">Person</span>
+</span><span class='line'>    <span class="kp">attr_accessor</span> <span class="ss">:name</span><span class="p">,</span><span class="ss">:age</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="kp">include</span> <span class="no">ActiveModel</span><span class="o">::</span><span class="no">Validations</span> <span class="c1">#混入验证功能</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="kp">include</span> <span class="no">ActiveModel</span><span class="o">::</span><span class="no">Conversion</span> <span class="err">＃混入转化功能</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="kp">extend</span>  <span class="no">ActiveModel</span><span class="o">::</span><span class="no">Naming</span> <span class="err">＃混入命名功能</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="n">attributes</span> <span class="o">=</span> <span class="p">{})</span>
+</span><span class='line'>          <span class="n">attributes</span><span class="o">.</span><span class="n">each</span> <span class="k">do</span> <span class="o">|</span><span class="nb">name</span><span class="p">,</span> <span class="n">value</span><span class="o">|</span>
+</span><span class='line'>              <span class="nb">send</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">#{</span><span class="nb">name</span><span class="si">}</span><span class="s2">=&quot;</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>  <span class="k">if</span> <span class="nb">respond_to?</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">#{</span><span class="n">k</span><span class="si">}</span><span class="s2">=&quot;</span><span class="p">)</span> <span class="p">}</span>
+</span><span class='line'>          <span class="k">end</span>
+</span><span class='line'>      <span class="k">end</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="nb">p</span> <span class="o">=</span> <span class="no">Person</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="ss">:name</span><span class="o">=&gt;</span> <span class="s2">&quot;suzhen&quot;</span><span class="p">,</span> <span class="ss">:age</span><span class="o">=&gt;</span><span class="mi">18</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="nb">p</span><span class="o">.</span><span class="n">age</span> <span class="o">=</span> <span class="mi">18</span>
+</span><span class='line'>  <span class="nb">p</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;suzhen&quot;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[RUBY魔法师（方法高级篇）]]></title>
