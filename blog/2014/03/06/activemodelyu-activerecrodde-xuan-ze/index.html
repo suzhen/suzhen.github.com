@@ -101,17 +101,21 @@
 <span class='line-number'>5</span>
 </pre></td><td class='code'><pre><code class='ruby'><span class='line'>
 </span><span class='line'>  <span class="k">class</span> <span class="nc">Person</span>
-</span><span class='line'>  <span class="kp">attr_accessor</span> <span class="ss">:name</span><span class="p">,</span><span class="ss">:age</span>
-</span><span class='line'>      <span class="kp">include</span> <span class="no">ActiveModel</span><span class="o">::</span><span class="no">Model</span>
+</span><span class='line'>    <span class="kp">attr_accessor</span> <span class="ss">:name</span><span class="p">,</span><span class="ss">:age</span>
+</span><span class='line'>    <span class="kp">include</span> <span class="no">ActiveModel</span><span class="o">::</span><span class="no">Model</span>
 </span><span class='line'>  <span class="k">end</span>
 </span></code></pre></td></tr></table></div></figure>
 
 
 <p>  那么Person的对象不再有save,update,Person类也不再有all,find,where等与数据保存，修改，查询，删除等一切方法。
-  但具有了以下方法：
-  to_model, to_key, to_param, persisted?
-  model_name 以及 model_name.human, model_name.partial_path, model_name.singular, model_name.plural
-  valid?, errors 以及 errors[], errors.full_messages</p>
+  但具有了以下方法：</p>
+
+<ol>
+<li>to_model, to_key, to_param, persisted?</li>
+<li>model_name 以及 model_name.human, model_name.partial_path, model_name.singular, model_name.plural</li>
+<li>valid?, errors 以及 errors[], errors.full_messages</li>
+</ol>
+
 
 <p>  但Person依然能像一般model类一样，实例化一个对象。</p>
 
@@ -171,10 +175,10 @@
 </pre></td><td class='code'><pre><code class='ruby'><span class='line'>
 </span><span class='line'>  <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="n">attributes</span> <span class="o">=</span> <span class="p">{})</span>
 </span><span class='line'>    <span class="c1">#元编程再次发威</span>
-</span><span class='line'>        <span class="n">attributes</span><span class="o">.</span><span class="n">each</span> <span class="k">do</span> <span class="o">|</span><span class="nb">name</span><span class="p">,</span> <span class="n">value</span><span class="o">|</span>
-</span><span class='line'>            <span class="nb">send</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">#{</span><span class="nb">name</span><span class="si">}</span><span class="s2">=&quot;</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
-</span><span class='line'>        <span class="k">end</span>
+</span><span class='line'>    <span class="n">attributes</span><span class="o">.</span><span class="n">each</span> <span class="k">do</span> <span class="o">|</span><span class="nb">name</span><span class="p">,</span> <span class="n">value</span><span class="o">|</span>
+</span><span class='line'>      <span class="nb">send</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">#{</span><span class="nb">name</span><span class="si">}</span><span class="s2">=&quot;</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
 </span><span class='line'>    <span class="k">end</span>
+</span><span class='line'>  <span class="k">end</span>
 </span></code></pre></td></tr></table></div></figure>
 
 
@@ -207,15 +211,15 @@
 </span><span class='line'>
 </span><span class='line'>    <span class="kp">include</span> <span class="no">ActiveModel</span><span class="o">::</span><span class="no">Validations</span> <span class="c1">#混入验证功能</span>
 </span><span class='line'>
-</span><span class='line'>    <span class="kp">include</span> <span class="no">ActiveModel</span><span class="o">::</span><span class="no">Conversion</span> <span class="err">＃混入转化功能</span>
+</span><span class='line'>    <span class="kp">include</span> <span class="no">ActiveModel</span><span class="o">::</span><span class="no">Conversion</span> <span class="c1">#混入转化功能</span>
 </span><span class='line'>
-</span><span class='line'>    <span class="kp">extend</span>  <span class="no">ActiveModel</span><span class="o">::</span><span class="no">Naming</span> <span class="err">＃混入命名功能</span>
+</span><span class='line'>    <span class="kp">extend</span>  <span class="no">ActiveModel</span><span class="o">::</span><span class="no">Naming</span> <span class="c1">#混入命名功能</span>
 </span><span class='line'>
 </span><span class='line'>    <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="n">attributes</span> <span class="o">=</span> <span class="p">{})</span>
 </span><span class='line'>          <span class="n">attributes</span><span class="o">.</span><span class="n">each</span> <span class="k">do</span> <span class="o">|</span><span class="nb">name</span><span class="p">,</span> <span class="n">value</span><span class="o">|</span>
 </span><span class='line'>              <span class="nb">send</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">#{</span><span class="nb">name</span><span class="si">}</span><span class="s2">=&quot;</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>  <span class="k">if</span> <span class="nb">respond_to?</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">#{</span><span class="n">k</span><span class="si">}</span><span class="s2">=&quot;</span><span class="p">)</span> <span class="p">}</span>
 </span><span class='line'>          <span class="k">end</span>
-</span><span class='line'>      <span class="k">end</span>
+</span><span class='line'>    <span class="k">end</span>
 </span><span class='line'>  <span class="k">end</span>
 </span><span class='line'>
 </span><span class='line'>  <span class="nb">p</span> <span class="o">=</span> <span class="no">Person</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="ss">:name</span><span class="o">=&gt;</span> <span class="s2">&quot;suzhen&quot;</span><span class="p">,</span> <span class="ss">:age</span><span class="o">=&gt;</span><span class="mi">18</span><span class="p">)</span>
